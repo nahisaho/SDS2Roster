@@ -1,0 +1,4 @@
+SIS ID,School SIS ID,Username,First Name,Last Name,Middle Name,Grade,Secondary Email,Student Number,Status
+STU001,SCH001,taro.yamada,Taro,Yamada,,10,taro@example.com,S2024001,Active
+STU002,SCH001,hanako.sato,Hanako,Sato,M,11,hanako@example.com,S2024002,Active
+STU003,SCH002,ken.tanaka,Ken,Tanaka,,9,ken@example.com,S2024003,Active

@@ -1,0 +1,3 @@
+SIS ID,School SIS ID,Section Name,Section Number,Term SIS ID,Term Name,Term Start Date,Term End Date,Course Name,Course Number,Course Description,Status
+SEC001,SCH001,Math 101 - Period 1,SEC-001,TERM001,Fall 2025,2025-09-01,2025-12-20,Mathematics I,MATH101,Introduction to Algebra,Active
+SEC002,SCH001,English 201 - Period 2,SEC-002,TERM001,Fall 2025,2025-09-01,2025-12-20,English Literature,ENG201,Literary Analysis,Active

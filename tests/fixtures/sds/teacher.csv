@@ -1,0 +1,3 @@
+SIS ID,School SIS ID,Username,First Name,Last Name,Middle Name,Secondary Email,Teacher Number,Status
+TEA001,SCH001,john.smith,John,Smith,,john.smith@example.com,T001,Active
+TEA002,SCH002,mary.jones,Mary,Jones,L,mary.jones@example.com,T002,Active
