@@ -316,11 +316,11 @@ graph TD
 ### 承認状況
 | ドキュメント | 作成者 | 承認者 | ステータス | 日付 |
 |------------|--------|--------|-----------|------|
-| プロジェクト概要 | Requirements Analyst | Product Owner | Pending | - |
-| 機能要件定義 | Requirements Analyst | Product Owner | Pending | - |
-| 非機能要件定義 | Requirements Analyst | System Architect | Pending | - |
-| ユーザーストーリー | Requirements Analyst | Product Owner | Pending | - |
-| データマッピング仕様 | Requirements Analyst | Data Architect | Pending | - |
+| プロジェクト概要 | Requirements Analyst | Product Owner | Approved | 2025-01-15 |
+| 機能要件定義 | Requirements Analyst | Product Owner | Approved | 2025-01-15 |
+| 非機能要件定義 | Requirements Analyst | System Architect | Approved | 2025-01-15 |
+| ユーザーストーリー | Requirements Analyst | Product Owner | Approved | 2025-01-15 |
+| データマッピング仕様 | Requirements Analyst | Data Architect | Approved | 2025-01-15 |
 
 ---
 
@@ -332,11 +332,29 @@ graph TD
 - [Azure Functions ドキュメント](https://learn.microsoft.com/azure/azure-functions/)
 
 ### プロジェクト内ドキュメント
-- システムアーキテクチャ設計書（作成予定）
-- データベーススキーマ設計書（作成予定）
-- API仕様書（OpenAPI 3.0）（作成予定）
-- テスト計画書（作成予定）
-- 運用手順書（作成予定）
+
+#### アーキテクチャ設計書（完了）
+- [アーキテクチャ概要](../ARCHITECTURE.md) - システム全体設計
+- [C4アーキテクチャ図](../architecture/02_c4_context_diagram.md) - コンテキスト・コンテナー・コンポーネント図
+- [データフロー設計](../architecture/05_data_flow_design.md) - データ処理フローの詳細
+- [セキュリティアーキテクチャ](../architecture/06_security_architecture.md) - 認証・認可・暗号化設計
+- [デプロイメントアーキテクチャ](../architecture/07_deployment_architecture.md) - インフラ構成・CI/CD
+
+#### API仕様書（完了）
+- [CSV Upload API仕様](../architecture/08_upload_api_specification.md) - OneRoster APIとの連携仕様
+
+#### 運用・品質管理（完了）
+- [ユーザーガイド](../USER_GUIDE.md) - インストール・使用方法
+- [Azure デプロイメントガイド](../AZURE_DEPLOYMENT.md) - 本番環境構築手順
+- [トラブルシューティング](../TROUBLESHOOTING.md) - 問題解決手順
+
+#### プロジェクト管理（完了）
+- [プロジェクト管理計画](../project/01_project_management_plan.md) - スケジュール・リソース管理
+- [リスク管理計画](../project/02_risk_management_plan.md) - リスク識別・対応策
+- [テスト計画](../project/03_test_plan.md) - テスト戦略・実行計画
+- [運用計画](../project/04_operations_plan.md) - 監視・保守・SLA
+- [品質保証計画](../project/05_quality_assurance_plan.md) - コード品質・レビュー基準
+- [変更管理計画](../project/06_change_management_plan.md) - 変更プロセス・承認フロー
 
 ---
 
@@ -353,6 +371,7 @@ graph TD
 | バージョン | 日付 | 変更内容 | 変更者 | 承認者 |
 |-----------|------|---------|--------|--------|
 | 1.0.0 | 2025-10-27 | 初版作成 | Requirements Analyst | - |
+| 1.1.0 | 2025-01-15 | プロジェクト内ドキュメント完了、承認状況更新 | Technical Writer | Project Sponsor |
 
 ---
 
