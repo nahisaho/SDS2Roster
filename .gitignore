@@ -2,6 +2,7 @@
 .copilot/
 prompts/
 templates/
+copilot-enhancer/
 
 # Python
 __pycache__/
