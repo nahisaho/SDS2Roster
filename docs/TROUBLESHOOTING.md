@@ -532,8 +532,8 @@ pytest tests/ --cov=sds2roster
    - [README](../README.md)
 
 2. **GitHubで検索**:
-   - [Issues](https://github.com/yourusername/SDS2Roster/issues)
-   - [Discussions](https://github.com/yourusername/SDS2Roster/discussions)
+   - [Issues](https://github.com/nahisaho/SDS2Roster/issues)
+   - [Discussions](https://github.com/nahisaho/SDS2Roster/discussions)
 
 3. **新しいIssueを作成**:
    - 上記の情報を含める
@@ -541,7 +541,7 @@ pytest tests/ --cov=sds2roster
    - 期待される動作と実際の動作を明記
 
 4. **コミュニティに質問**:
-   - [GitHub Discussions](https://github.com/yourusername/SDS2Roster/discussions)
+   - [GitHub Discussions](https://github.com/nahisaho/SDS2Roster/discussions)
    - Stack Overflow (タグ: `sds2roster`)
 
 ---

@@ -34,7 +34,7 @@ SDS2Rosterは、Microsoft SDS形式のCSVファイルをOneRoster CSV形式に�
 1. リポジトリのクローン
 
 ```bash
-git clone https://github.com/yourusername/SDS2Roster.git
+git clone https://github.com/nahisaho/SDS2Roster.git
 cd SDS2Roster
 ```
 
@@ -520,4 +520,4 @@ git push origin feature/your-feature
 
 ---
 
-**開発チーム** | [ドキュメント](docs/) | [Issue報告](https://github.com/yourusername/SDS2Roster/issues)
+**開発チーム** | [ドキュメント](docs/) | [Issue報告](https://github.com/nahisaho/SDS2Roster/issues)

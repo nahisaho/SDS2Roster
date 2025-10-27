@@ -29,7 +29,7 @@ pip install sds2roster
 ### 方法2: ソースからインストール
 
 ```bash
-git clone https://github.com/yourusername/SDS2Roster.git
+git clone https://github.com/nahisaho/SDS2Roster.git
 cd SDS2Roster
 pip install -e .
 ```
@@ -325,5 +325,5 @@ A: はい、Python 3.10以上がインストールされていれば、すべて
 ## サポート
 
 問題や質問がある場合:
-- [GitHub Issues](https://github.com/yourusername/SDS2Roster/issues)
-- [ディスカッション](https://github.com/yourusername/SDS2Roster/discussions)
+- [GitHub Issues](https://github.com/nahisaho/SDS2Roster/issues)
+- [ディスカッション](https://github.com/nahisaho/SDS2Roster/discussions)
