@@ -515,8 +515,20 @@ git push origin feature/your-feature
 
 - [OneRoster](https://www.imsglobal.org/activity/onerosterlis) - IMS Global Learning Consortium
 - [Microsoft SDS](https://sds.microsoft.com/) - School Data Sync
-- **Python**: 3.10+
-- **ライセンス**: MIT
+
+---
+
+## 📄 ライセンス
+
+このプロジェクトは[MITライセンス](LICENSE)の下で公開されています。
+
+Copyright (c) 2025 nahisaho
+
+## 🔗 リンク
+
+- **リポジトリ**: https://github.com/nahisaho/SDS2Roster
+- **Issues**: https://github.com/nahisaho/SDS2Roster/issues
+- **ドキュメント**: [docs/](docs/)
 
 ---
 
