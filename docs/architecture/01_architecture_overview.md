@@ -25,7 +25,7 @@
 1. **イベント駆動型**: Azure Event Gridによる非同期処理
 2. **スケーラビリティ**: 最大100万レコード/日の処理能力
 3. **高可用性**: 99.9%稼働率（月間ダウンタイム43分以内）
-4. **セキュリティ**: データ暗号化、Azure AD認証、Managed Identity
+4. **セキュリティ**: データ暗号化、Entra ID認証、Managed Identity
 5. **コスト最適化**: 月額7.3万円以内（Table Storage採用）
 6. **マルチ言語対応**: Python版とJavaScript版の並行開発
 
@@ -125,7 +125,7 @@ sequenceDiagram
     F2->>F2: SDS→OneRoster変換
     F2->>Blob: 変換結果保存
     F2->>F3: ファイル送信トリガー
-    F3->>API: Azure AD認証
+    F3->>API: Entra ID認証
     F3->>API: CSVファイルアップロード（metadata.json付）
     API-->>F3: 202 Accepted（uploadId）
     F3->>TS: ジョブ完了記録
@@ -214,7 +214,7 @@ Properties:
 
 ```mermaid
 graph TD
-    A[管理画面] -->|Azure AD| B[認証]
+    A[管理画面] -->|Entra ID| B[認証]
     B --> C{RBAC}
     C -->|Admin| D[全操作]
     C -->|Operator| E[ファイルアップロード・ジョブ確認]
@@ -225,7 +225,7 @@ graph TD
     G -->|Managed Identity| J[Table Storage]
     G -->|Managed Identity| K[Blob Storage]
     
-    G -->|Azure AD + API Key| L[CSV Upload API]
+    G -->|Entra ID + API Key| L[CSV Upload API]
 ```
 
 ### セキュリティレイヤー
@@ -233,7 +233,7 @@ graph TD
 | レイヤー | 実装 |
 |---------|------|
 | **ネットワーク** | Private Endpoint（将来拡張）、Service Endpoint |
-| **認証** | Azure AD（Entra ID）、Managed Identity、API Key |
+| **認証** | Entra ID、Managed Identity、API Key |
 | **認可** | RBAC、Key Vault Access Policy（RBACモデル） |
 | **暗号化（転送中）** | TLS 1.2以上（TLS 1.3推奨） |
 | **暗号化（保存時）** | AES-256（プラットフォーム管理キー） |

@@ -36,7 +36,7 @@
 
 | 操作 | 目標応答時間 | 最大許容時間 |
 |------|-------------|-------------|
-| 認証(Azure AD Token取得) | 500ms以内 | 2秒 |
+| 認証(Entra ID Token取得) | 500ms以内 | 2秒 |
 | CSVファイルアップロード(1ファイル10MB) | 5秒以内 | 15秒 |
 | アップロードステータス確認 | 500ms以内 | 2秒 |
 
@@ -198,13 +198,13 @@
 **説明**: アクセス制御により不正アクセスを防止。
 
 **認証方式**:
-- **Azure AD(Entra ID)認証**(管理画面アクセス)
+- **Entra ID認証**（管理画面アクセス）
 - **マネージドID(推奨)**(Azureサービス間通信)
   - システム割り当てマネージドIDまたはユーザー割り当てマネージドID
   - Key Vault、Table Storage、Storage Accountへのアクセスに使用
   - 認証情報のハードコーディングを排除
   - 参考: [Azure Key Vault Best Practices - Managed Identities](https://learn.microsoft.com/azure/key-vault/general/best-practices#identity-management)
-- **Azure AD + API Key認証**(CSV Upload API)
+- **Entra ID + API Key認証**（CSV Upload API）
   - Bearer TokenとAPI Keyのデュアル認証
   - API KeyはKey Vaultで管理
   - アクセストークンのキャッシュと自動更新
@@ -588,7 +588,7 @@
 
 **API仕様**:
 - CSV Upload API v1(カスタム仕様)
-- Azure AD認証 + API Key
+- Entra ID認証 + API Key
 - JSON形式(RFC 8259)
 - multipart/form-data(RFC 7578)
 

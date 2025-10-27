@@ -339,7 +339,7 @@ So that 手動でファイル転送する必要がない
 ```
 
 **受け入れ基準**:
-- [ ] Azure AD + API Keyで認証される
+- [ ] Entra ID + API Keyで認証される
 - [ ] 複数のCSVファイルとmetadata.jsonを一括送信(multipart/form-data)
 - [ ] SHA-256チェックサムで整合性検証
 - [ ] ファイルサイズ制限(50MB/ファイル、100MB/リクエスト)を遵守
@@ -349,7 +349,7 @@ So that 手動でファイル転送する必要がない
 
 **技術的詳細**:
 - 指数バックオフによるリトライ
-- Azure AD Bearer Token + X-API-Key ヘッダー
+- Entra ID Bearer Token + X-API-Key ヘッダー
 
 ---
 

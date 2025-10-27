@@ -530,7 +530,7 @@ git push origin feature/your-feature
 
 #### API統合 (2025年12月予定)
 - [ ] **CSV Upload API統合**
-  - [ ] Azure AD認証実装
+  - [ ] Entra ID認証実装
   - [ ] multipart/form-data送信
   - [ ] リトライ・エラーハンドリング
 - [ ] **Web管理画面**

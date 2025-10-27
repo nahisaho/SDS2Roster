@@ -59,7 +59,7 @@
 **主要要件**:
 - パフォーマンス: 10万レコード/10分以内
 - 可用性: 99.9%(月間ダウンタイム43分以内)
-- セキュリティ: Azure AD + API Key、データ暗号化(AES-256)
+- セキュリティ: Entra ID + API Key、データ暗号化(AES-256)
 - スケーラビリティ: 最大100万ユーザー対応
 - コスト: 月額10万円以内
 
@@ -110,14 +110,14 @@ Azure Blob StorageにアップロードされたSDS CSVファイルを自動的�
 ### 主要機能
 1. **自動変換**: Blob Storageへのアップロードをトリガーに自動変換
 2. **データ品質保証**: 入力・出力データのバリデーション
-3. **ファイルアップロード**: Azure AD + API Key認証によるCSV Upload APIへのアップロード
+3. **ファイルアップロード**: Entra ID + API Key認証によるCSV Upload APIへのアップロード
 4. **監視・運用**: リアルタイムダッシュボード、定期レポート
 5. **エラー復旧**: 失敗ジョブの再実行、エラーデータ修正
 
 ### 技術スタック
 - **クラウド**: Azure(Functions, Blob Storage, Table Storage, Key Vault)
 - **言語**: Python 3.11
-- **認証**: Azure AD + API Key、Azure Managed Identity
+- **認証**: Entra ID + API Key、Azure Managed Identity
 - **監視**: Application Insights、Azure Monitor
 - **CI/CD**: GitHub Actions
 - **IaC**: Terraform
@@ -253,7 +253,7 @@ graph TD
 ## 🔐 セキュリティ設計
 
 ### 認証・認可
-- **Azure AD**: 管理画面アクセス
+- **Entra ID**: 管理画面アクセス
 - **Managed Identity**: Azureサービス間通信
 - **OAuth 2.0**: OneRoster API認証
 - **RBAC**: ロールベースアクセス制御（Admin, Operator, Viewer）

@@ -85,7 +85,7 @@ C4モデルの最上位レベルとして、SDS2Rosterシステムと外部シ�
 
 **API仕様**:
 - プロトコル: HTTPS
-- 認証: Azure AD OAuth 2.0 Bearer Token + API Key
+- 認証: Entra ID OAuth 2.0 Bearer Token + API Key
 - データ形式: multipart/form-data（CSV + metadata.json）
 - バージョン: v1
 
@@ -140,18 +140,18 @@ C4Context
     System(sds2roster, "SDS2Roster", "SDS CSV → OneRoster CSV<br/>自動変換システム<br/>(Azure Functions)<br/><br/>Python版 / JavaScript版")
     
     System_Ext(sds, "Microsoft SDS", "学校データソース<br/>CSV形式")
-    System_Ext(uploadapi, "CSV Upload API", "OneRoster CSVファイル<br/>受信システム<br/>REST API v1<br/>Azure AD + API Key")
-    System_Ext(azuread, "Azure AD<br/>(Entra ID)", "認証・認可サービス<br/>RBAC")
+    System_Ext(uploadapi, "CSV Upload API", "OneRoster CSVファイル<br/>受信システム<br/>REST API v1<br/>Entra ID + API Key")
+    System_Ext(azuread, "Entra ID", "認証・認可サービス<br/>RBAC")
     System_Ext(notification, "通知システム", "メール・Teams通知")
     
     Rel(admin, sds2roster, "CSVアップロード<br/>ジョブ監視", "HTTPS")
     Rel(sysadmin, sds2roster, "設定・監視", "Azure Portal")
     Rel(admin, sds, "CSVエクスポート", "手動")
     
-    Rel(sds2roster, uploadapi, "CSVファイル送信", "HTTPS<br/>Azure AD + API Key<br/>multipart/form-data")
+    Rel(sds2roster, uploadapi, "CSVファイル送信", "HTTPS<br/>Entra ID + API Key<br/>multipart/form-data")
     Rel(upload_admin, uploadapi, "データ受信確認", "管理画面")
     
-    Rel(sds2roster, azuread, "認証", "Azure AD<br/>Managed Identity")
+    Rel(sds2roster, azuread, "認証", "Entra ID<br/>Managed Identity")
     Rel(admin, azuread, "ログイン", "OIDC")
     
     Rel(sds2roster, notification, "通知送信", "SMTP/Webhook")
@@ -269,9 +269,9 @@ graph TB
 
 | 境界 | 保護手段 |
 |------|---------|
-| **外部→システム** | Azure AD認証、TLS 1.2+、RBAC |
+| **外部→システム** | Entra ID認証、TLS 1.2+、RBAC |
 | **システム内部** | Managed Identity、Private Endpoint（将来） |
-| **システム→外部API** | Azure AD + API Key、TLS 1.2+、証明書ピン留め |
+| **システム→外部API** | Entra ID + API Key、TLS 1.2+、証明書ピン留め |
 | **データ保存** | AES-256暗号化、Key Vault管理 |
 | **監査** | すべてのアクセスをApplication Insightsに記録 |
 

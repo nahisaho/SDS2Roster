@@ -49,14 +49,14 @@
 
 ### 認証方式
 
-**Azure AD Bearer Token + API Key**
+**Entra ID Bearer Token + API Key**
 
 ```
-Authorization: Bearer {azure_ad_token}
+Authorization: Bearer {entra_id_token}
 X-API-Key: {api_key}
 ```
 
-### Azure AD認証
+### Entra ID認証
 
 **トークン取得例**:
 ```bash

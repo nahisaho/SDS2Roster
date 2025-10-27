@@ -483,7 +483,7 @@ source.systemCode,SDS
 **説明**: CSVアップロードAPIに接続し、変換したCSVファイルを送信する。
 
 **受け入れ基準**:
-- Azure AD OAuth 2.0認証（Client Credentials Flow）
+- Entra ID OAuth 2.0認証（Client Credentials Flow）
 - API Key認証（X-API-Key ヘッダー）
 - HTTPS通信（TLS 1.2以上）
 - 接続タイムアウト: 60秒
@@ -499,7 +499,7 @@ source.systemCode,SDS
 
 **認証フロー**:
 ```
-1. Azure ADトークン取得
+1. Entra IDトークン取得
    POST https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token
    Body: client_id, client_secret, grant_type=client_credentials
    Response: access_token, expires_in
