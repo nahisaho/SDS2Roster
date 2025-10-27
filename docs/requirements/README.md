@@ -328,7 +328,7 @@ graph TD
 
 ### 外部仕様書
 - [IMS OneRoster v1.2仕様](https://www.imsglobal.org/spec/oneroster/v1p2)
-- [Microsoft SDS CSV Format v2.1](https://learn.microsoft.com/en-us/schooldatasync/csv-files)
+- [Microsoft SDS CSV Format v2.1](https://learn.microsoft.com/ja-jp/schooldatasync/sds-v2.1-csv-file-format)
 - [Azure Functions ドキュメント](https://learn.microsoft.com/azure/azure-functions/)
 
 ### プロジェクト内ドキュメント
