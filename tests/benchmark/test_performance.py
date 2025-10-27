@@ -26,7 +26,7 @@ from sds2roster.models.sds import (
 def generate_test_data(num_students: int = 1000, num_courses: int = 100) -> Dict[str, List]:
     """Generate test SDS data of specified size."""
     print(f"\nGenerating test data: {num_students} students, {num_courses} courses...")
-    
+
     # Generate schools
     schools = [
         SDSSchool(
@@ -36,7 +36,7 @@ def generate_test_data(num_students: int = 1000, num_courses: int = 100) -> Dict
         )
         for i in range(max(1, num_students // 100))
     ]
-    
+
     # Generate students
     students = [
         SDSStudent(
@@ -50,7 +50,7 @@ def generate_test_data(num_students: int = 1000, num_courses: int = 100) -> Dict
         )
         for i in range(num_students)
     ]
-    
+
     # Generate teachers
     num_teachers = max(10, num_courses // 5)
     teachers = [
@@ -64,7 +64,7 @@ def generate_test_data(num_students: int = 1000, num_courses: int = 100) -> Dict
         )
         for i in range(num_teachers)
     ]
-    
+
     # Generate sections (courses)
     sections = [
         SDSSection(
@@ -80,7 +80,7 @@ def generate_test_data(num_students: int = 1000, num_courses: int = 100) -> Dict
         )
         for i in range(num_courses)
     ]
-    
+
     # Generate enrollments (students in courses)
     enrollments = []
     students_per_course = max(5, num_students // num_courses)
@@ -95,7 +95,7 @@ def generate_test_data(num_students: int = 1000, num_courses: int = 100) -> Dict
                     role="student",
                 )
             )
-    
+
     return {
         "schools": schools,
         "students": students,
@@ -107,40 +107,40 @@ def generate_test_data(num_students: int = 1000, num_courses: int = 100) -> Dict
 
 class TestPerformance:
     """Performance benchmarking tests."""
-    
+
     @pytest.mark.benchmark
     def test_small_dataset_1k(self, tmp_path):
         """Benchmark: 1,000 students, 100 courses"""
         self._run_benchmark(tmp_path, num_students=1_000, num_courses=100, name="1K")
-    
+
     @pytest.mark.benchmark
     def test_medium_dataset_10k(self, tmp_path):
         """Benchmark: 10,000 students, 500 courses"""
         self._run_benchmark(tmp_path, num_students=10_000, num_courses=500, name="10K")
-    
+
     @pytest.mark.benchmark
     @pytest.mark.slow
     def test_large_dataset_100k(self, tmp_path):
         """Benchmark: 100,000 students, 2,000 courses"""
         self._run_benchmark(tmp_path, num_students=100_000, num_courses=2_000, name="100K")
-    
+
     def _run_benchmark(self, tmp_path: Path, num_students: int, num_courses: int, name: str):
         """Run benchmark test for specific dataset size."""
         print(f"\n{'='*60}")
         print(f"Benchmark: {name} Dataset")
         print(f"Students: {num_students:,}, Courses: {num_courses:,}")
         print(f"{'='*60}")
-        
+
         # Generate test data
         start_gen = time.time()
         test_data = generate_test_data(num_students, num_courses)
         gen_time = time.time() - start_gen
-        print(f"✓ Test data generated in {gen_time:.2f}s")
-        
+        print(f"Test data generated in {gen_time:.2f}s")
+
         # Create temporary SDS directory
         sds_dir = tmp_path / "sds"
         sds_dir.mkdir()
-        
+
         # Write SDS CSV files
         start_write = time.time()
         self._write_csv(sds_dir / "School.csv", test_data["schools"])
@@ -149,8 +149,8 @@ class TestPerformance:
         self._write_csv(sds_dir / "Section.csv", test_data["sections"])
         self._write_csv(sds_dir / "StudentEnrollment.csv", test_data["enrollments"])
         write_time = time.time() - start_write
-        print(f"✓ CSV files written in {write_time:.2f}s")
-        
+        print(f"CSV files written in {write_time:.2f}s")
+
         # Run conversion
         converter = SDSToOneRosterConverter()
         sds_data_model = SDSDataModel(
@@ -160,17 +160,17 @@ class TestPerformance:
             sections=test_data["sections"],
             enrollments=test_data["enrollments"],
         )
-        
+
         start_convert = time.time()
         result = converter.convert(sds_data_model)
         convert_time = time.time() - start_convert
-        
+
         # Calculate stats
         total_records = sum(len(v) for v in test_data.values())
         records_per_sec = total_records / convert_time if convert_time > 0 else 0
-        
+
         # Print results
-        print(f"\n📊 Conversion Results:")
+        print(f"\nConversion Results:")
         print(f"  • Total time: {convert_time:.2f}s")
         print(f"  • Records/second: {records_per_sec:,.0f}")
         print(f"  • Organizations: {len(result.orgs)}")
@@ -179,27 +179,27 @@ class TestPerformance:
         print(f"  • Classes: {len(result.classes)}")
         print(f"  • Enrollments: {len(result.enrollments)}")
         print(f"  • Academic Sessions: {len(result.academic_sessions)}")
-        
+
         # Performance assertions
         assert convert_time < 60, f"Conversion took too long: {convert_time:.2f}s"
         assert records_per_sec > 100, f"Too slow: {records_per_sec:.0f} records/sec"
-        
+
         # Verify results
         assert len(result.orgs) > 0
         assert len(result.users) > 0
         assert len(result.courses) > 0
         assert len(result.classes) > 0
         assert len(result.enrollments) > 0
-        
+
         print(f"{'='*60}\n")
-    
+
     def _write_csv(self, path: Path, data: List):
         """Write data to CSV file."""
         if not data:
             return
-        
+
         import csv
-        
+
         with open(path, "w", newline="", encoding="utf-8") as f:
             if hasattr(data[0], "model_dump"):
                 # Pydantic model
@@ -216,18 +216,18 @@ class TestPerformance:
 
 class TestMemoryUsage:
     """Memory usage tests."""
-    
+
     @pytest.mark.benchmark
     def test_memory_efficiency(self, tmp_path):
         """Test memory usage during conversion."""
         import tracemalloc
-        
+
         # Generate test data
         test_data = generate_test_data(num_students=10_000, num_courses=500)
-        
+
         # Start memory tracking
         tracemalloc.start()
-        
+
         # Run conversion
         converter = SDSToOneRosterConverter()
         sds_data_model = SDSDataModel(
@@ -238,15 +238,15 @@ class TestMemoryUsage:
             enrollments=test_data["enrollments"],
         )
         converter.convert(sds_data_model)
-        
+
         # Get memory stats
         current, peak = tracemalloc.get_traced_memory()
         tracemalloc.stop()
-        
+
         # Print results
-        print(f"\n💾 Memory Usage:")
+        print(f"\nMemory Usage:")
         print(f"  • Current: {current / 1024 / 1024:.2f} MB")
         print(f"  • Peak: {peak / 1024 / 1024:.2f} MB")
-        
+
         # Memory should be reasonable (< 500MB for 10K students)
         assert peak < 500 * 1024 * 1024, f"Peak memory too high: {peak / 1024 / 1024:.2f}MB"

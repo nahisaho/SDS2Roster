@@ -8,11 +8,11 @@
 
 Microsoft SDS（School Data Sync）形式をOneRoster CSV形式に変換するツール
 
-## 📋 概要
+## 概要
 
 SDS2Rosterは、Microsoft SDS形式のCSVファイルをOneRoster CSV形式に変換するPythonツールです。教育機関のデータ管理システム間でのデータ移行を効率化します。
 
-## ✨ 主な機能
+## 主な機能
 
 - **完全自動変換**: Microsoft SDS形式からOneRoster形式への100%準拠変換
 - **高性能処理**: 61,487レコード/秒の変換速度、メモリ効率最適化
@@ -23,7 +23,7 @@ SDS2Rosterは、Microsoft SDS形式のCSVファイルをOneRoster CSV形式に�
 - **エンタープライズ品質**: 87.92%カバレッジ、160テスト、型安全、リンタークリーン
 - **開発者フレンドリー**: 包括的ドキュメント、設定例、トラブルシューティング
 
-## 🚀 クイックスタート
+## クイックスタート
 
 ### 必要要件
 
@@ -61,7 +61,7 @@ pip install -r requirements-dev.txt  # 開発用
 pip install -e .
 ```
 
-## 💻 使い方
+## 使い方
 
 ### 基本的な変換
 
@@ -87,7 +87,7 @@ sds2roster version
 sds2roster convert /path/to/sds/files /path/to/output --verbose
 ```
 
-## ☁️ Azure統合
+## Azure統合
 
 SDS2RosterはAzure Blob StorageとAzure Table Storageをサポートしています。
 
@@ -172,7 +172,7 @@ AZURE_STORAGE_ACCOUNT_KEY=your_account_key
 AZURE_TABLE_CONNECTION_STRING=DefaultEndpointsProtocol=https;...
 ```
 
-## 📁 プロジェクト構造
+## プロジェクト構造
 
 ```
 SDS2Roster/
@@ -200,7 +200,7 @@ SDS2Roster/
 └── README.md
 ```
 
-## 🧪 テスト
+## テスト
 
 ### すべてのテストを実行
 
@@ -226,7 +226,7 @@ pytest tests/unit/
 pytest tests/integration/
 ```
 
-## 🛠️ 開発
+## 開発
 
 ### コードフォーマット
 
@@ -254,7 +254,7 @@ mypy src/
 black src/ tests/ && isort src/ tests/ && flake8 src/ tests/ && mypy src/ && pytest
 ```
 
-## 📚 ドキュメント
+## ドキュメント
 
 詳細なドキュメントは`docs/`ディレクトリにあります：
 
@@ -262,7 +262,7 @@ black src/ tests/ && isort src/ tests/ && flake8 src/ tests/ && mypy src/ && pyt
 - [アーキテクチャ設計](docs/architecture/)
 - [プロジェクト管理](docs/project/)
 
-## 🔧 環境変数
+## 環境変数
 
 `.env`ファイルを作成して以下の環境変数を設定してください：
 
@@ -351,7 +351,7 @@ mypy src/
 pytest tests/ -v --cov=src/sds2roster
 ```
 
-## 🚀 CI/CD
+## CI/CD
 
 このプロジェクトはGitHub Actionsを使用した自動化されたCI/CDパイプラインを持っています。
 
@@ -359,14 +359,14 @@ pytest tests/ -v --cov=src/sds2roster
 
 プッシュまたはプルリクエストごとに自動実行:
 
-- ✅ Python 3.10, 3.11, 3.12でのテスト
-- ✅ コードフォーマットチェック (Black, isort)
-- ✅ リンターチェック (Ruff)
-- ✅ 型チェック (mypy)
-- ✅ テストカバレッジレポート
-- ✅ パッケージビルド
-- ✅ 統合テスト
-- ✅ CLIコマンド動作確認
+- Python 3.10, 3.11, 3.12でのテスト
+- コードフォーマットチェック (Black, isort)
+- リンターチェック (Ruff)
+- 型チェック (mypy)
+- テストカバレッジレポート
+- パッケージビルド
+- 統合テスト
+- CLIコマンド動作確認
 
 ### カバレッジレポート
 
@@ -397,7 +397,7 @@ git push origin v0.1.0
 - 週次でGitHub Actionsをチェック
 - 自動的にプルリクエストを作成
 
-## �🤝 コントリビューション
+## コントリビューション
 
 貢献を歓迎します！以下の手順にしたがってください：
 
@@ -452,18 +452,18 @@ git push origin feature/your-feature
 
 ### プルリクエストガイドライン
 
-- [ ] すべてのテストが成功
-- [ ] コードカバレッジが90%以上
-- [ ] リンターとフォーマッターチェックに合格
-- [ ] 型チェックに合格
-- [ ] ドキュメントが更新されている
-- [ ] CHANGELOGが更新されている（該当する場合）
+- すべてのテストが成功
+- コードカバレッジが90%以上
+- リンターとフォーマッターチェックに合格
+- 型チェックに合格
+- ドキュメントが更新されている
+- CHANGELOGが更新されている（該当する場合）
 
-## 📄 ライセンス
+## ライセンス
 
 このプロジェクトはMITライセンスの下でライセンスされています。詳細は[LICENSE](LICENSE)ファイルを参照してください。
 
-## 📞 サポート
+## サポート
 
 問題が発生した場合：
 
@@ -473,27 +473,27 @@ git push origin feature/your-feature
    - [機能リクエスト](.github/ISSUE_TEMPLATE/feature_request.md)
 3. プロジェクトチームに連絡
 
-## 🗺️ ロードマップ
+## ロードマップ
 
-### Phase 1: コア開発 ✅ 完了 (2025-10-27)
+### Phase 1: コア開発 [完了] (2025-10-27)
 
-- [x] **プロジェクト構造セットアップ** - Pythonパッケージ構造、依存関係管理
-- [x] **データモデル実装** - PydanticによるSDS/OneRosterモデル
-- [x] **バリデーションユーティリティ** - データ整合性チェック機能
-- [x] **CSVパーサー/ライター** - 高性能CSV処理エンジン
-- [x] **変換ロジック実装** - SDS→OneRoster完全変換
-- [x] **CLIインターフェイス** - 5つのコマンド実装
-- [x] **包括的テストスイート** - 160テスト、87.92%カバレッジ
-  - [x] ユニットテスト（116個）
-  - [x] 統合テスト（32個） 
-  - [x] E2Eテスト（12個）
-- [x] **CI/CDパイプライン** - GitHub Actions、自動テスト・デプロイ
-- [x] **Azure統合** - Blob Storage、Table Storage完全統合
-- [x] **Dockerコンテナー化** - マルチステージビルド、Azurite統合
-- [x] **包括的ドキュメント** - アーキテクチャ、ユーザーガイド、デプロイ手順
-- [x] **オープンソースリリース** - MIT License、v0.1.0タグ
+- **プロジェクト構造セットアップ** - Pythonパッケージ構造、依存関係管理
+- **データモデル実装** - PydanticによるSDS/OneRosterモデル
+- **バリデーションユーティリティ** - データ整合性チェック機能
+- **CSVパーサー/ライター** - 高性能CSV処理エンジン
+- **変換ロジック実装** - SDS→OneRoster完全変換
+- **CLIインターフェイス** - 5つのコマンド実装
+- **包括的テストスイート** - 160テスト、87.92%カバレッジ
+  - ユニットテスト（116個）
+  - 統合テスト（32個） 
+  - E2Eテスト（12個）
+- **CI/CDパイプライン** - GitHub Actions、自動テスト・デプロイ
+- **Azure統合** - Blob Storage、Table Storage完全統合
+- **Dockerコンテナー化** - マルチステージビルド、Azurite統合
+- **包括的ドキュメント** - アーキテクチャ、ユーザーガイド、デプロイ手順
+- **オープンソースリリース** - MIT License、v0.1.0タグ
 
-### Phase 2: 本番デプロイ 🚧 実行中
+### Phase 2: 本番デプロイ [実行中]
 
 #### インフラストラクチャ (Week 1-2)
 - [ ] **Azure環境構築**
@@ -526,73 +526,73 @@ git push origin feature/your-feature
   - [ ] 障害対応手順
   - [ ] バックアップ戦略
 
-### Phase 3: 拡張機能 🔮 計画中
+### Phase 3: 拡張機能 [計画中]
 
 #### API統合 (2025年12月予定)
-- [ ] **CSV Upload API統合**
-  - [ ] Entra ID認証実装
-  - [ ] multipart/form-data送信
-  - [ ] リトライ・エラーハンドリング
-- [ ] **Web管理画面**
-  - [ ] React + TypeScript UI
-  - [ ] ジョブ監視ダッシュボード
-  - [ ] 履歴管理・レポート機能
+- **CSV Upload API統合**
+  - Entra ID認証実装
+  - multipart/form-data送信
+  - リトライ・エラーハンドリング
+- **Web管理画面**
+  - React + TypeScript UI
+  - ジョブ監視ダッシュボード
+  - 履歴管理・レポート機能
 
 #### 多言語サポート (2025年1月予定)
-- [ ] **JavaScript/TypeScript版**
-  - [ ] Node.js実装
-  - [ ] npmパッケージ公開
-  - [ ] 同等機能・パフォーマンス
+- **JavaScript/TypeScript版**
+  - Node.js実装
+  - npmパッケージ公開
+  - 同等機能・パフォーマンス
 
 #### エンタープライズ機能 (2025年2月予定)
-- [ ] **高度なデータマッピング**
-  - [ ] カスタムマッピングルール
-  - [ ] GUIマッピングエディター
-  - [ ] データ変換プレビュー
-- [ ] **セキュリティ強化**
-  - [ ] データ暗号化
-  - [ ] 監査ログ
-  - [ ] RBAC (Role-Based Access Control)
+- **高度なデータマッピング**
+  - カスタムマッピングルール
+  - GUIマッピングエディター
+  - データ変換プレビュー
+- **セキュリティ強化**
+  - データ暗号化
+  - 監査ログ
+  - RBAC (Role-Based Access Control)
 
-## 📊 プロジェクトステータス
+## プロジェクトステータス
 
 - **バージョン**: 0.1.0
-- **Phase 1**: ✅ 完了（2025-10-27）
-- **Phase 2**: 🚧 本番デプロイ実行中
+- **Phase 1**: 完了（2025-10-27）
+- **Phase 2**: 本番デプロイ実行中
 - **開発状態**: プロダクションレディ
 - **テストカバレッジ**: 87.92%
 - **総テスト数**: 160個
 - **Python互換性**: 3.10, 3.11, 3.12
 - **安定性**: 本番利用可能
 
-## 🏆 品質メトリクス
+## 品質メトリクス
 
 | メトリクス | 値 | ステータス |
 |---------|-----|---------|
-| テストカバレッジ | 87.92% | ✅ 高品質 |
-| 総テスト数 | 160 | ✅ 包括的 |
-| ユニットテスト | 116 | ✅ 完了 |
-| 統合テスト | 32 | ✅ 完了 |
-| E2Eテスト | 12 | ✅ 完了 |
-| Python対応バージョン | 3.10+ | ✅ 最新対応 |
-| リンターエラー | 0 | ✅ クリーン |
-| 型チェックエラー | 0 | ✅ 型安全 |
-| パフォーマンス | 61,487 records/sec | ✅ 高速 |
+| テストカバレッジ | 87.92% | 高品質 |
+| 総テスト数 | 160 | 包括的 |
+| ユニットテスト | 116 | 完了 |
+| 統合テスト | 32 | 完了 |
+| E2Eテスト | 12 | 完了 |
+| Python対応バージョン | 3.10+ | 最新対応 |
+| リンターエラー | 0 | クリーン |
+| 型チェックエラー | 0 | 型安全 |
+| パフォーマンス | 61,487 records/sec | 高速 |
 
-## 🙏 謝辞
+## 謝辞
 
 - [OneRoster](https://www.imsglobal.org/activity/onerosterlis) - IMS Global Learning Consortium
 - [Microsoft SDS](https://sds.microsoft.com/) - School Data Sync
 
 ---
 
-## 📄 ライセンス
+## ライセンス
 
 このプロジェクトは[MITライセンス](LICENSE)の下で公開されています。
 
 Copyright (c) 2025 nahisaho
 
-## 🔗 リンク
+## リンク
 
 - **リポジトリ**: https://github.com/nahisaho/SDS2Roster
 - **Issues**: https://github.com/nahisaho/SDS2Roster/issues

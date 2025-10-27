@@ -114,7 +114,9 @@ def convert(
                 console.print(f"  Generated {len(oneroster_data.courses)} courses")
                 console.print(f"  Generated {len(oneroster_data.classes)} classes")
                 console.print(f"  Generated {len(oneroster_data.enrollments)} enrollments")
-                console.print(f"  Generated {len(oneroster_data.academic_sessions)} academic sessions")
+                console.print(
+                    f"  Generated {len(oneroster_data.academic_sessions)} academic sessions"
+                )
                 console.print()
 
             # Write OneRoster files
@@ -125,7 +127,7 @@ def convert(
 
         # Success summary
         console.print()
-        console.print("[bold green]✓ Conversion completed successfully![/bold green]")
+        console.print("[bold green]Conversion completed successfully![/bold green]")
         console.print()
 
         # Display summary table
@@ -196,10 +198,10 @@ def validate(
     for file in required_files:
         if (input_path / file).exists():
             found_files.append(file)
-            console.print(f"  [green]✓[/green] {file}")
+            console.print(f"  [green]OK[/green] {file}")
         else:
             missing_files.append(file)
-            console.print(f"  [red]✗[/red] {file} (missing)")
+            console.print(f"  [red]MISSING[/red] {file} (missing)")
 
     console.print()
 
@@ -228,7 +230,7 @@ def validate(
 
         # Display validation results
         console.print()
-        console.print("[bold green]✓ All files validated successfully![/bold green]")
+        console.print("[bold green]All files validated successfully![/bold green]")
         console.print()
 
         # Display statistics table
@@ -247,8 +249,12 @@ def validate(
         if verbose:
             console.print()
             console.print("[cyan]Detailed Statistics:[/cyan]")
-            console.print(f"  Student enrollments: {len([e for e in sds_data.enrollments if e.role == 'student'])}")
-            console.print(f"  Teacher enrollments: {len([e for e in sds_data.enrollments if e.role == 'teacher'])}")
+            console.print(
+                f"  Student enrollments: {len([e for e in sds_data.enrollments if e.role == 'student'])}"
+            )
+            console.print(
+                f"  Teacher enrollments: {len([e for e in sds_data.enrollments if e.role == 'teacher'])}"
+            )
 
     except FileNotFoundError as e:
         console.print(f"[red]Error: File not found: {e}[/red]")
@@ -266,11 +272,11 @@ def version() -> None:
     table = Table(title="SDS2Roster Version Information")
     table.add_column("Item", style="cyan")
     table.add_column("Value", style="green")
-    
+
     table.add_row("Version", __version__)
     table.add_row("Python", ">=3.10")
     table.add_row("License", "MIT")
-    
+
     console.print(table)
 
 
@@ -313,12 +319,14 @@ def azure_upload(
 
     try:
         client = BlobStorageClient(connection_string=conn_str, container_name=container)
-        with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}")) as progress:
+        with Progress(
+            SpinnerColumn(), TextColumn("[progress.description]{task.description}")
+        ) as progress:
             task = progress.add_task("Uploading files...", total=None)
             urls = client.upload_directory(input_path, prefix=prefix)
             progress.update(task, completed=True)
 
-        console.print(f"[green]✓ Successfully uploaded {len(urls)} files[/green]")
+        console.print(f"[green]Successfully uploaded {len(urls)} files[/green]")
         for filename, url in urls.items():
             console.print(f"  • {filename}")
 
@@ -365,12 +373,14 @@ def azure_download(
 
     try:
         client = BlobStorageClient(connection_string=conn_str, container_name=container)
-        with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}")) as progress:
+        with Progress(
+            SpinnerColumn(), TextColumn("[progress.description]{task.description}")
+        ) as progress:
             task = progress.add_task("Downloading files...", total=None)
             files = client.download_directory(output_path, prefix=prefix)
             progress.update(task, completed=True)
 
-        console.print(f"[green]✓ Successfully downloaded {len(files)} files[/green]")
+        console.print(f"[green]Successfully downloaded {len(files)} files[/green]")
         for file_path in files:
             console.print(f"  • {file_path.name}")
 
@@ -421,7 +431,7 @@ def azure_log(
             metadata={"timestamp": datetime.now(UTC).isoformat()},
         )
 
-        console.print(f"[green]✓ Logged conversion job: {conversion_id}[/green]")
+        console.print(f"[green]Logged conversion job: {conversion_id}[/green]")
         console.print(f"  Source: {source_type}")
         console.print(f"  Target: {target_type}")
         console.print(f"  Status: {status}")
@@ -464,9 +474,7 @@ def azure_list_jobs(
 
     try:
         client = TableStorageClient(connection_string=conn_str)
-        conversions = client.list_conversions(
-            source_type=source_type, status=status, limit=limit
-        )
+        conversions = client.list_conversions(source_type=source_type, status=status, limit=limit)
 
         if not conversions:
             console.print("[yellow]No conversion jobs found[/yellow]")
