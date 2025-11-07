@@ -4,6 +4,9 @@ prompts/
 templates/
 copilot-enhancer/
 
+# GitHub Copilot workspace (auto-generated)
+.github/agents/
+
 # Python
 __pycache__/
 *.py[cod]
@@ -22,15 +25,20 @@ parts/
 sdist/
 var/
 wheels/
+pip-wheel-metadata/
+share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+MANIFEST
 
 # Virtual environments
 venv/
 .venv/
 ENV/
 env/
+env.bak/
+venv.bak/
 
 # IDE
 .vscode/
@@ -39,14 +47,18 @@ env/
 *.swo
 *~
 .DS_Store
+Thumbs.db
 
 # Testing
 .pytest_cache/
 .coverage
+.coverage.*
 htmlcov/
 *.cover
 .hypothesis/
 coverage.xml
+.tox/
+.nox/
 
 # Mypy
 .mypy_cache/
@@ -60,16 +72,51 @@ dmypy.json
 
 # Azure
 .azure/
+local.settings.json
+.python_packages/
+__blobstorage__/
+__queuestorage__/
+__azurite_db*__.json
 
 # Logs
 *.log
+logs/
+
+# Output directories
+output/
+oneroster-output/
+test-output/
 
 # Data files (excluding sample data)
 *.csv
 *.xlsx
 !tests/fixtures/**/*.csv
 !tests/fixtures/**/*.xlsx
+!RosterCSV_samples/**/*.csv
 
 # Temporary files
 *.tmp
+*.temp
 *.bak
+*.backup
+.cache/
+
+# Documentation build
+docs/_build/
+docs/.doctrees/
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+*.ipynb
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Docker
+docker-compose.override.yml
+
+# OS specific
+.DS_Store
+Thumbs.db
