@@ -6,7 +6,6 @@ This module contains Pydantic models for OneRoster v1.2 CSV format.
 from datetime import datetime
 from enum import Enum
 from typing import Optional
-from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -71,6 +70,7 @@ class OneRosterOrg(BaseModel):
     name: str = Field(..., description="Organization name")
     type: OrgType = Field(..., description="Organization type")
     identifier: Optional[str] = Field(None, description="Human-readable identifier")
+    parent_sourced_id: Optional[str] = Field(None, description="Parent organization GUID")
     metadata: Optional[str] = Field(None, description="Metadata in JSON format")
 
     @field_validator("sourced_id", "name")
@@ -79,6 +79,7 @@ class OneRosterOrg(BaseModel):
         """Validate that string fields are not empty."""
         if not v or not v.strip():
             raise ValueError("Field cannot be empty")
+        return v.strip()
         return v.strip()
 
 
@@ -222,6 +223,29 @@ class OneRosterAcademicSession(BaseModel):
         return v.strip()
 
 
+class OneRosterRole(BaseModel):
+    """OneRoster Role model (roles.csv)."""
+
+    model_config = ConfigDict(str_strip_whitespace=True, populate_by_name=True)
+
+    sourced_id: str = Field(..., description="Unique identifier (GUID)")
+    status: OneRosterStatus = Field(..., description="Status")
+    date_last_modified: datetime = Field(..., description="Last modification date")
+    user_sourced_id: str = Field(..., description="User GUID")
+    role_type: str = Field(..., description="Role type (primary, secondary)")
+    role: str = Field(..., description="Role name")
+    org_sourced_id: str = Field(..., description="Organization GUID")
+    user_profile_sourced_id: Optional[str] = Field(None, description="User profile GUID")
+
+    @field_validator("sourced_id", "user_sourced_id", "role_type", "role", "org_sourced_id")
+    @classmethod
+    def validate_not_empty(cls, v: str) -> str:
+        """Validate that required string fields are not empty."""
+        if not v or not v.strip():
+            raise ValueError("Field cannot be empty")
+        return v.strip()
+
+
 class OneRosterDataModel(BaseModel):
     """Complete OneRoster data model container."""
 
@@ -237,6 +261,7 @@ class OneRosterDataModel(BaseModel):
     academic_sessions: list[OneRosterAcademicSession] = Field(
         default_factory=list, description="List of academic sessions"
     )
+    roles: list[OneRosterRole] = Field(default_factory=list, description="List of roles")
 
     def get_org_by_sourced_id(self, sourced_id: str) -> Optional[OneRosterOrg]:
         """Get organization by sourced ID."""

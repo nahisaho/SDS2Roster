@@ -1,10 +1,24 @@
-# Azurite を使用したローカル開発環境のセットアップ
+# 統合テストガイド
 
-## 前提条件
+## ローカル統合テスト（Azureなし）
+
+Azure接続が不要なエンドツーエンドテスト:
+
+```bash
+# ローカル統合テストのみ実行
+pytest tests/integration/test_end_to_end.py -v
+
+# または、Azureテストを除外して実行
+pytest tests/integration/ -m "not azure" -v
+```
+
+## Azure統合テスト（Azurite必須）
+
+### 前提条件
 
 Azurite (Azure Storage Emulator) が必要です。以下のいずれかの方法でインストール:
 
-### 方法1: Docker (推奨)
+#### 方法1: Docker (推奨)
 
 ```bash
 # docker-composeで起動
@@ -16,7 +30,7 @@ docker run -d -p 10000:10000 -p 10001:10001 -p 10002:10002 \
   mcr.microsoft.com/azure-storage/azurite
 ```
 
-### 方法2: npm
+#### 方法2: npm
 
 ```bash
 # グローバルインストール
@@ -26,27 +40,41 @@ npm install -g azurite
 azurite --blobPort 10000 --queuePort 10001 --tablePort 10002
 ```
 
-## Azure E2Eテストの実行
+### Azure E2Eテストの実行
 
 ```bash
-# 環境変数設定
-export AZURE_STORAGE_CONNECTION_STRING="DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;"
+# Azureテストのみ実行（Azuriteが起動している必要があります）
+pytest -m azure -v
 
-# Azure E2Eテストを実行
+# 個別にAzure E2Eテストを実行
 pytest tests/integration/test_azure_e2e.py -v
 
-# CLI E2Eテストを実行
+# CLI Azure E2Eテストを実行
 pytest tests/integration/test_cli_azure_e2e.py -v
-
-# すべての統合テストを実行
-pytest tests/integration/ -v
 ```
 
-## Azuriteなしでテストをスキップ
+### テストマーカーの使用
+
+このプロジェクトでは以下のpytestマーカーを使用しています:
+
+- `unit`: ユニットテスト
+- `integration`: 統合テスト（ローカル）
+- `azure`: Azure統合テスト（Azurite必須）
+- `slow`: 低速テスト
+- `benchmark`: パフォーマンステスト
 
 ```bash
-# Azure E2Eテストをスキップ
-SKIP_AZURE_TESTS=true pytest tests/ -v
+# Azureテストを除外
+pytest -m "not azure"
+
+# ユニットテストのみ
+pytest -m unit
+
+# 統合テストのみ（Azureを含む）
+pytest -m integration
+
+# ローカル統合テストのみ（Azureを除く）
+pytest -m "integration and not azure"
 ```
 
 ## トラブルシューティング

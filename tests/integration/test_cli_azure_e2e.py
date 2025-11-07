@@ -6,11 +6,13 @@ These tests require Azurite to be running:
     
 Set environment variable for testing:
     export AZURE_STORAGE_CONNECTION_STRING="DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;"
+
+To run these tests:
+    pytest tests/integration/test_cli_azure_e2e.py -m azure
 """
 
 import os
 import subprocess
-from pathlib import Path
 
 import pytest
 
@@ -23,10 +25,8 @@ AZURITE_CONNECTION_STRING = (
     "TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;"
 )
 
-pytestmark = pytest.mark.skipif(
-    os.getenv("SKIP_AZURE_TESTS", "false").lower() == "true",
-    reason="Azure CLI integration tests disabled",
-)
+# Mark all tests in this module as azure integration tests
+pytestmark = [pytest.mark.azure, pytest.mark.integration]
 
 
 @pytest.fixture

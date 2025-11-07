@@ -1,6 +1,5 @@
 """Unit tests for Azure Table Storage client."""
 
-from datetime import UTC, datetime
 from unittest.mock import MagicMock, patch
 
 import pytest

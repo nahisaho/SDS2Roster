@@ -1,8 +1,8 @@
-"""Converter for transforming SDS data to OneRoster format."""
+"""Converter module for transforming SDS data to OneRoster format."""
 
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 
-from .models.oneroster import (
+from sds2roster.models.oneroster import (
     ClassType,
     EnrollmentRole,
     OneRosterAcademicSession,
@@ -11,6 +11,7 @@ from .models.oneroster import (
     OneRosterDataModel,
     OneRosterEnrollment,
     OneRosterOrg,
+    OneRosterRole,
     OneRosterStatus,
     OneRosterUser,
     OrgType,
@@ -20,7 +21,6 @@ from .models.sds import SDSDataModel
 from .utils.validators import (
     create_metadata_json,
     create_user_ids_json,
-    format_iso8601,
     generate_guid,
 )
 
@@ -34,7 +34,7 @@ class SDSToOneRosterConverter:
 
     def __init__(self) -> None:
         """Initialize the converter."""
-        self.conversion_timestamp = datetime.now(UTC)
+        self.conversion_timestamp = datetime.now(timezone.utc)
 
     def convert(self, sds_data: SDSDataModel) -> OneRosterDataModel:
         """Convert SDS data model to OneRoster data model.
@@ -66,6 +66,9 @@ class SDSToOneRosterConverter:
         # Convert academic sessions (from section term information)
         academic_sessions = self._convert_academic_sessions(sds_data)
 
+        # Convert roles (user role assignments)
+        roles = self._convert_roles(sds_data)
+
         return OneRosterDataModel(
             orgs=orgs,
             users=users,
@@ -73,6 +76,7 @@ class SDSToOneRosterConverter:
             classes=classes,
             enrollments=enrollments,
             academic_sessions=academic_sessions,
+            roles=roles,
         )
 
     def _convert_organizations(self, sds_data: SDSDataModel) -> list[OneRosterOrg]:
@@ -94,6 +98,7 @@ class SDSToOneRosterConverter:
                 name=school.name,
                 type=OrgType.SCHOOL,
                 identifier=school.school_number,
+                parent_sourced_id=None,  # Can be set if district information is available
                 metadata=create_metadata_json(school.sis_id),
             )
             orgs.append(org)
@@ -337,4 +342,45 @@ class SDSToOneRosterConverter:
             sessions.append(session)
 
         return sessions
+
+    def _convert_roles(self, sds_data: SDSDataModel) -> list[OneRosterRole]:
+        """Convert SDS student and teacher data to OneRoster roles.
+
+        Args:
+            sds_data: SDS data model
+
+        Returns:
+            List of OneRoster roles
+        """
+        roles = []
+
+        # Convert student roles
+        for student in sds_data.students:
+            role = OneRosterRole(
+                sourced_id=generate_guid("role", f"{student.sis_id}_student"),
+                status=OneRosterStatus.ACTIVE,
+                date_last_modified=self.conversion_timestamp,
+                user_sourced_id=generate_guid("user", student.sis_id),
+                role_type="primary",
+                role="student",
+                org_sourced_id=generate_guid("org", student.school_sis_id),
+                user_profile_sourced_id="",
+            )
+            roles.append(role)
+
+        # Convert teacher roles
+        for teacher in sds_data.teachers:
+            role = OneRosterRole(
+                sourced_id=generate_guid("role", f"{teacher.sis_id}_teacher"),
+                status=OneRosterStatus.ACTIVE,
+                date_last_modified=self.conversion_timestamp,
+                user_sourced_id=generate_guid("user", teacher.sis_id),
+                role_type="primary",
+                role="teacher",
+                org_sourced_id=generate_guid("org", teacher.school_sis_id),
+                user_profile_sourced_id="",
+            )
+            roles.append(role)
+
+        return roles
 

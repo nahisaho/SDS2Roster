@@ -1,8 +1,7 @@
 """Command-line interface for SDS2Roster."""
 
 import os
-import sys
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
@@ -26,6 +25,70 @@ app.add_typer(azure_app, name="azure")
 console = Console()
 
 
+def _validate_input_directory(input_path: Path) -> None:
+    """Validate that the input directory exists and is a directory."""
+    if not input_path.exists():
+        console.print(f"[red]Error: Input directory not found: {input_path}[/red]")
+        raise typer.Exit(code=1)
+
+    if not input_path.is_dir():
+        console.print(f"[red]Error: Input path is not a directory: {input_path}[/red]")
+        raise typer.Exit(code=1)
+
+
+def _check_required_files(input_path: Path) -> list[str]:
+    """Check for required SDS files and return list of missing files."""
+    required_files = [
+        "school.csv",
+        "student.csv",
+        "teacher.csv",
+        "section.csv",
+        "studentEnrollment.csv",
+        "teacherRoster.csv",
+    ]
+
+    missing_files = []
+    for file in required_files:
+        if not (input_path / file).exists():
+            missing_files.append(file)
+
+    return missing_files
+
+
+def _display_missing_files_error(missing_files: list[str]) -> None:
+    """Display error message for missing files."""
+    console.print("[red]Error: Missing required SDS files:[/red]")
+    for file in missing_files:
+        console.print(f"  - {file}")
+
+
+def _check_and_display_files(input_path: Path) -> tuple[list[str], list[str]]:
+    """Check required files and display status. Returns (missing_files, found_files)."""
+    required_files = [
+        "school.csv",
+        "student.csv",
+        "teacher.csv",
+        "section.csv",
+        "studentEnrollment.csv",
+        "teacherRoster.csv",
+    ]
+
+    console.print("[cyan]Checking required files...[/cyan]")
+    missing_files = []
+    found_files = []
+
+    for file in required_files:
+        if (input_path / file).exists():
+            found_files.append(file)
+            console.print(f"  [green]OK[/green] {file}")
+        else:
+            missing_files.append(file)
+            console.print(f"  [red]MISSING[/red] {file} (missing)")
+
+    console.print()
+    return missing_files, found_files
+
+
 @app.command()
 def convert(
     input_path: Path = typer.Argument(..., help="Path to SDS CSV files directory"),
@@ -46,34 +109,17 @@ def convert(
     console.print()
 
     # Validate input directory
-    if not input_path.exists():
-        console.print(f"[red]Error: Input directory not found: {input_path}[/red]")
-        sys.exit(1)
-
-    if not input_path.is_dir():
-        console.print(f"[red]Error: Input path is not a directory: {input_path}[/red]")
-        sys.exit(1)
+    _validate_input_directory(input_path)
+    
+    # Ensure output path is absolute
+    output_path = output_path.absolute()
 
     # Check for required SDS files
-    required_files = [
-        "school.csv",
-        "student.csv",
-        "teacher.csv",
-        "section.csv",
-        "studentEnrollment.csv",
-        "teacherRoster.csv",
-    ]
-
-    missing_files = []
-    for file in required_files:
-        if not (input_path / file).exists():
-            missing_files.append(file)
+    missing_files = _check_required_files(input_path)
 
     if missing_files:
-        console.print("[red]Error: Missing required SDS files:[/red]")
-        for file in missing_files:
-            console.print(f"  - {file}")
-        sys.exit(1)
+        _display_missing_files_error(missing_files)
+        raise typer.Exit(code=1)
 
     try:
         with Progress(
@@ -148,12 +194,12 @@ def convert(
 
     except FileNotFoundError as e:
         console.print(f"[red]Error: File not found: {e}[/red]")
-        sys.exit(1)
+        raise typer.Exit(code=1) from e
     except Exception as e:
         console.print(f"[red]Error during conversion: {e}[/red]")
         if verbose:
             console.print_exception()
-        sys.exit(1)
+        raise typer.Exit(code=1) from e
 
 
 @app.command()
@@ -169,45 +215,18 @@ def validate(
     Example:
         sds2roster validate ./sds_data
     """
-    console.print(f"[bold blue]Validating SDS files...[/bold blue]")
+    console.print("[bold blue]Validating SDS files...[/bold blue]")
     console.print()
 
     # Validate input directory
-    if not input_path.exists():
-        console.print(f"[red]Error: Input directory not found: {input_path}[/red]")
-        sys.exit(1)
-
-    if not input_path.is_dir():
-        console.print(f"[red]Error: Input path is not a directory: {input_path}[/red]")
-        sys.exit(1)
+    _validate_input_directory(input_path)
 
     # Check for required SDS files
-    required_files = [
-        "school.csv",
-        "student.csv",
-        "teacher.csv",
-        "section.csv",
-        "studentEnrollment.csv",
-        "teacherRoster.csv",
-    ]
-
-    console.print("[cyan]Checking required files...[/cyan]")
-    missing_files = []
-    found_files = []
-
-    for file in required_files:
-        if (input_path / file).exists():
-            found_files.append(file)
-            console.print(f"  [green]OK[/green] {file}")
-        else:
-            missing_files.append(file)
-            console.print(f"  [red]MISSING[/red] {file} (missing)")
-
-    console.print()
+    missing_files, found_files = _check_and_display_files(input_path)
 
     if missing_files:
         console.print("[red]Validation failed: Missing required files[/red]")
-        sys.exit(1)
+        raise typer.Exit(code=1)
 
     # Try to parse files
     try:
@@ -258,12 +277,12 @@ def validate(
 
     except FileNotFoundError as e:
         console.print(f"[red]Error: File not found: {e}[/red]")
-        sys.exit(1)
+        raise typer.Exit(code=1) from e
     except Exception as e:
         console.print(f"[red]Validation failed: {e}[/red]")
         if verbose:
             console.print_exception()
-        sys.exit(1)
+        raise typer.Exit(code=1) from e
 
 
 @app.command()
@@ -301,7 +320,7 @@ def azure_upload(
             "[red]Error: Azure dependencies not installed. "
             "Run: pip install sds2roster[azure][/red]"
         )
-        sys.exit(1)
+        raise typer.Exit(code=1)
 
     # Get connection string from env if not provided
     conn_str = connection_string or os.getenv("AZURE_STORAGE_CONNECTION_STRING")
@@ -310,9 +329,9 @@ def azure_upload(
             "[red]Error: Azure connection string not provided. "
             "Use --connection-string or set AZURE_STORAGE_CONNECTION_STRING[/red]"
         )
-        sys.exit(1)
+        raise typer.Exit(code=1)
 
-    console.print(f"[bold blue]Uploading files to Azure Blob Storage[/bold blue]")
+    console.print("[bold blue]Uploading files to Azure Blob Storage[/bold blue]")
     console.print(f"Container: [cyan]{container}[/cyan]")
     console.print(f"Prefix: [cyan]{prefix or '(root)'}[/cyan]")
     console.print()
@@ -332,7 +351,7 @@ def azure_upload(
 
     except Exception as e:
         console.print(f"[red]Error uploading files: {e}[/red]")
-        sys.exit(1)
+        raise typer.Exit(code=1) from e
 
 
 @azure_app.command("download")
@@ -356,7 +375,7 @@ def azure_download(
             "[red]Error: Azure dependencies not installed. "
             "Run: pip install sds2roster[azure][/red]"
         )
-        sys.exit(1)
+        raise typer.Exit(code=1)
 
     conn_str = connection_string or os.getenv("AZURE_STORAGE_CONNECTION_STRING")
     if not conn_str:
@@ -364,9 +383,9 @@ def azure_download(
             "[red]Error: Azure connection string not provided. "
             "Use --connection-string or set AZURE_STORAGE_CONNECTION_STRING[/red]"
         )
-        sys.exit(1)
+        raise typer.Exit(code=1)
 
-    console.print(f"[bold blue]Downloading files from Azure Blob Storage[/bold blue]")
+    console.print("[bold blue]Downloading files from Azure Blob Storage[/bold blue]")
     console.print(f"Container: [cyan]{container}[/cyan]")
     console.print(f"Prefix: [cyan]{prefix or '(all)'}[/cyan]")
     console.print()
@@ -386,7 +405,7 @@ def azure_download(
 
     except Exception as e:
         console.print(f"[red]Error downloading files: {e}[/red]")
-        sys.exit(1)
+        raise typer.Exit(code=1) from e
 
 
 @azure_app.command("log")
@@ -411,7 +430,7 @@ def azure_log(
             "[red]Error: Azure dependencies not installed. "
             "Run: pip install sds2roster[azure][/red]"
         )
-        sys.exit(1)
+        raise typer.Exit(code=1)
 
     conn_str = connection_string or os.getenv("AZURE_TABLE_CONNECTION_STRING")
     if not conn_str:
@@ -419,16 +438,16 @@ def azure_log(
             "[red]Error: Azure connection string not provided. "
             "Use --connection-string or set AZURE_TABLE_CONNECTION_STRING[/red]"
         )
-        sys.exit(1)
+        raise typer.Exit(code=1)
 
     try:
         client = TableStorageClient(connection_string=conn_str)
-        entity = client.log_conversion(
+        client.log_conversion(
             conversion_id=conversion_id,
             source_type=source_type,
             target_type=target_type,
             status=status,
-            metadata={"timestamp": datetime.now(UTC).isoformat()},
+            metadata={"timestamp": datetime.now(timezone.utc).isoformat()},
         )
 
         console.print(f"[green]Logged conversion job: {conversion_id}[/green]")
@@ -438,7 +457,7 @@ def azure_log(
 
     except Exception as e:
         console.print(f"[red]Error logging conversion: {e}[/red]")
-        sys.exit(1)
+        raise typer.Exit(code=1) from e
 
 
 @azure_app.command("list-jobs")
@@ -462,7 +481,7 @@ def azure_list_jobs(
             "[red]Error: Azure dependencies not installed. "
             "Run: pip install sds2roster[azure][/red]"
         )
-        sys.exit(1)
+        raise typer.Exit(code=1)
 
     conn_str = connection_string or os.getenv("AZURE_TABLE_CONNECTION_STRING")
     if not conn_str:
@@ -470,7 +489,7 @@ def azure_list_jobs(
             "[red]Error: Azure connection string not provided. "
             "Use --connection-string or set AZURE_TABLE_CONNECTION_STRING[/red]"
         )
-        sys.exit(1)
+        raise typer.Exit(code=1)
 
     try:
         client = TableStorageClient(connection_string=conn_str)
@@ -501,7 +520,7 @@ def azure_list_jobs(
 
     except Exception as e:
         console.print(f"[red]Error listing jobs: {e}[/red]")
-        sys.exit(1)
+        raise typer.Exit(code=1) from e
 
 
 def main() -> None:

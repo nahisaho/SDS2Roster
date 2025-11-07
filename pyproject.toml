@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sds2roster"
-version = "0.1.0"
+version = "0.2.0"
 description = "Microsoft SDS to OneRoster CSV converter"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -119,6 +119,7 @@ addopts = [
 markers = [
     "unit: Unit tests",
     "integration: Integration tests",
+    "azure: Azure cloud integration tests (requires Azure connection)",
     "slow: Slow running tests",
     "benchmark: Performance benchmark tests",
 ]

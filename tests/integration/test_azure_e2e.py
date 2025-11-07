@@ -7,11 +7,13 @@ These tests require Azurite to be running:
 Or:
     docker run -p 10000:10000 -p 10001:10001 -p 10002:10002 \
         mcr.microsoft.com/azure-storage/azurite
-"""
 
-import os
-from datetime import datetime
-from pathlib import Path
+To run these tests:
+    pytest tests/integration/test_azure_e2e.py -m azure
+    
+To skip these tests (default for local):
+    pytest tests/unit/
+"""
 
 import pytest
 from azure.core.exceptions import ResourceNotFoundError
@@ -28,11 +30,8 @@ AZURITE_CONNECTION_STRING = (
     "TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;"
 )
 
-# Skip tests if Azurite is not available
-pytestmark = pytest.mark.skipif(
-    os.getenv("SKIP_AZURE_TESTS", "false").lower() == "true",
-    reason="Azure integration tests disabled (set SKIP_AZURE_TESTS=false to enable)",
-)
+# Mark all tests in this module as azure integration tests
+pytestmark = [pytest.mark.azure, pytest.mark.integration]
 
 
 @pytest.fixture

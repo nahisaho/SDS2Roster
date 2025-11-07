@@ -7,6 +7,7 @@ from sds2roster.models.oneroster import (
     OneRosterUser,
     OneRosterClass,
     OneRosterEnrollment,
+    OneRosterRole,
     OneRosterDataModel,
     OneRosterStatus,
     OrgType,
@@ -28,12 +29,14 @@ class TestOneRosterOrg:
             name="Tokyo International School",
             type=OrgType.SCHOOL,
             identifier="TIS-001",
+            parent_sourced_id="550e8400-e29b-41d4-a716-446655440000",
             metadata='{"sis_id":"SCH001"}',
         )
         assert org.sourced_id == "550e8400-e29b-41d4-a716-446655440001"
         assert org.status == OneRosterStatus.ACTIVE
         assert org.name == "Tokyo International School"
         assert org.type == OrgType.SCHOOL
+        assert org.parent_sourced_id == "550e8400-e29b-41d4-a716-446655440000"
 
     def test_org_without_optional_fields(self) -> None:
         """Test creating an org without optional fields."""
@@ -45,6 +48,7 @@ class TestOneRosterOrg:
             type=OrgType.SCHOOL,
         )
         assert org.identifier is None
+        assert org.parent_sourced_id is None
         assert org.metadata is None
 
     def test_org_empty_name_raises_error(self) -> None:
@@ -301,3 +305,65 @@ class TestOneRosterDataModel:
         model = OneRosterDataModel()
         found_org = model.get_org_by_sourced_id("invalid-id")
         assert found_org is None
+
+
+class TestOneRosterRole:
+    """Test suite for OneRosterRole model."""
+
+    def test_create_valid_role(self) -> None:
+        """Test creating a valid role."""
+        role = OneRosterRole(
+            sourced_id="550e8400-e29b-41d4-a716-446655440100",
+            status=OneRosterStatus.ACTIVE,
+            date_last_modified=datetime(2025, 10, 27, 10, 30, 0),
+            user_sourced_id="550e8400-e29b-41d4-a716-446655440002",
+            role_type="primary",
+            role="student",
+            org_sourced_id="550e8400-e29b-41d4-a716-446655440001",
+            user_profile_sourced_id=None,
+        )
+        assert role.sourced_id == "550e8400-e29b-41d4-a716-446655440100"
+        assert role.user_sourced_id == "550e8400-e29b-41d4-a716-446655440002"
+        assert role.role_type == "primary"
+        assert role.role == "student"
+        assert role.org_sourced_id == "550e8400-e29b-41d4-a716-446655440001"
+
+    def test_role_without_optional_fields(self) -> None:
+        """Test creating a role without optional fields."""
+        role = OneRosterRole(
+            sourced_id="550e8400-e29b-41d4-a716-446655440101",
+            status=OneRosterStatus.ACTIVE,
+            date_last_modified=datetime(2025, 10, 27),
+            user_sourced_id="550e8400-e29b-41d4-a716-446655440002",
+            role_type="secondary",
+            role="teacher",
+            org_sourced_id="550e8400-e29b-41d4-a716-446655440001",
+        )
+        assert role.user_profile_sourced_id is None
+
+    def test_role_empty_user_sourced_id_raises_error(self) -> None:
+        """Test that empty user_sourced_id raises validation error."""
+        with pytest.raises(ValueError, match="Field cannot be empty"):
+            OneRosterRole(
+                sourced_id="550e8400-e29b-41d4-a716-446655440102",
+                status=OneRosterStatus.ACTIVE,
+                date_last_modified=datetime(2025, 10, 27),
+                user_sourced_id="",
+                role_type="primary",
+                role="student",
+                org_sourced_id="550e8400-e29b-41d4-a716-446655440001",
+            )
+
+    def test_role_empty_role_raises_error(self) -> None:
+        """Test that empty role raises validation error."""
+        with pytest.raises(ValueError, match="Field cannot be empty"):
+            OneRosterRole(
+                sourced_id="550e8400-e29b-41d4-a716-446655440103",
+                status=OneRosterStatus.ACTIVE,
+                date_last_modified=datetime(2025, 10, 27),
+                user_sourced_id="550e8400-e29b-41d4-a716-446655440002",
+                role_type="primary",
+                role="",
+                org_sourced_id="550e8400-e29b-41d4-a716-446655440001",
+            )
+

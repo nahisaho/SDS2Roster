@@ -1,9 +1,24 @@
 # SDS to OneRoster 変換ツール - データマッピング仕様
 
-**文書バージョン**: 1.0.0  
+**文書バージョン**: 2.0.0  
 **作成日**: 2025-10-27  
-**最終更新**: 2025-10-27  
-**ステータス**: Draft
+**最終更新**: 2025-11-07  
+**ステータス**: Approved
+
+---
+
+## 変更履歴
+
+### v2.0.0 (2025-11-07)
+- OneRoster v1.2仕様に厳密に準拠するよう出力形式を変更
+- `manifest.csv`と`roles.csv`の生成を追加
+- 各CSVファイルの列構成を簡素化
+- `status`と`dateLastModified`フィールドを空文字列に変更
+- `parentSourcedId`フィールドをorgs.csvに追加
+- `userMasterIdentifier`フィールドをusers.csvに追加
+
+### v1.0.0 (2025-10-27)
+- 初版作成
 
 ---
 
@@ -45,12 +60,14 @@ graph LR
 | OneRoster フィールド | 必須 | データ型 | SDS マッピング元 | 変換ルール |
 |-------------------|------|---------|-----------------|----------|
 | sourcedId | Yes | GUID | - | UUID v5生成（`org:{school.SIS ID}`） |
-| status | Yes | Enum | - | 固定値: `"active"` |
-| dateLastModified | Yes | DateTime | - | 変換実行日時（ISO 8601） |
+| status | Yes | Enum | - | 空文字列（v2.0.0で変更） |
+| dateLastModified | Yes | DateTime | - | 空文字列（v2.0.0で変更） |
 | name | Yes | String | school.Name | そのまま使用 |
 | type | Yes | Enum | - | 固定値: `"school"` |
 | identifier | No | String | school.School Number | そのまま使用（存在する場合） |
-| metadata | No | JSON | school.SIS ID | `{"sis_id": "{school.SIS ID}"}` |
+| parentSourcedId | No | GUID | - | 親組織のGUID（v2.0.0で追加） |
+
+**注意**: v2.0.0より`metadata`フィールドは出力されません。
 
 **サンプル変換例**:
 
@@ -63,9 +80,9 @@ SCH002,Osaka Tech High School,OTHS-002
 
 **OneRoster出力（orgs.csv）**:
 ```csv
-sourcedId,status,dateLastModified,name,type,identifier,metadata
-550e8400-e29b-41d4-a716-446655440001,active,2025-10-27T10:30:00Z,Tokyo International School,school,TIS-001,"{""sis_id"":""SCH001""}"
-550e8400-e29b-41d4-a716-446655440002,active,2025-10-27T10:30:00Z,Osaka Tech High School,school,OTHS-002,"{""sis_id"":""SCH002""}"
+sourcedId,status,dateLastModified,name,type,identifier,parentSourcedId
+550e8400-e29b-41d4-a716-446655440001,,,Tokyo International School,school,TIS-001,
+550e8400-e29b-41d4-a716-446655440002,,,Osaka Tech High School,school,OTHS-002,
 ```
 
 ---
@@ -78,22 +95,25 @@ sourcedId,status,dateLastModified,name,type,identifier,metadata
 | OneRoster フィールド | 必須 | データ型 | SDS マッピング元 | 変換ルール |
 |-------------------|------|---------|-----------------|----------|
 | sourcedId | Yes | GUID | - | UUID v5生成（`user:{student.SIS ID}`） |
-| status | Yes | Enum | - | 固定値: `"active"` |
-| dateLastModified | Yes | DateTime | - | 変換実行日時 |
+| status | Yes | Enum | - | 空文字列（v2.0.0で変更） |
+| dateLastModified | Yes | DateTime | - | 空文字列（v2.0.0で変更） |
 | enabledUser | Yes | Boolean | - | 固定値: `true` |
-| orgSourcedIds | Yes | Array[GUID] | student.School SIS ID | 組織のsourcedIdに変換 |
-| role | Yes | Enum | - | 固定値: `"student"` |
 | username | Yes | String | student.Username | そのまま使用 |
-| userIds | No | JSON | student.SIS ID | `[{"type":"sisId","identifier":"{SIS ID}"}]` |
 | givenName | Yes | String | student.First Name | そのまま使用 |
 | familyName | Yes | String | student.Last Name | そのまま使用 |
 | middleName | No | String | student.Middle Name | そのまま使用（存在する場合） |
 | email | No | String | student.Secondary Email | そのまま使用（存在する場合） |
-| sms | No | String | - | 空 |
-| phone | No | String | - | 空 |
-| agents | No | Array | - | 空 |
-| grades | No | Array | student.Grade | 配列に変換: `["{Grade}"]` |
+| grades | No | String | student.Grade | そのまま使用 |
 | password | No | String | - | 空 |
+| userMasterIdentifier | Yes | String | - | sourcedIdの小文字版（v2.0.0で追加） |
+
+**注意**: v2.0.0より以下のフィールドは出力されません：
+- `orgSourcedIds`
+- `role`
+- `userIds`
+- `sms`
+- `phone`
+- `agents`
 
 **サンプル変換例**:
 

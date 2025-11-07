@@ -5,7 +5,6 @@ This module provides functionality to write OneRoster data models to CSV files.
 
 import csv
 from pathlib import Path
-from typing import Optional
 
 from ..models.oneroster import OneRosterDataModel
 
@@ -48,23 +47,26 @@ class OneRosterCSVWriter:
                     "name",
                     "type",
                     "identifier",
-                    "metadata",
+                    "parentSourcedId",
                 ],
             )
             writer.writeheader()
 
             for org in data_model.orgs:
+                # Find parent sourced ID
+                parent_sourced_id = ""
+                if hasattr(org, 'parent_sourced_id') and org.parent_sourced_id:
+                    parent_sourced_id = org.parent_sourced_id
+                
                 writer.writerow(
                     {
                         "sourcedId": org.sourced_id,
-                        "status": org.status.value,
-                        "dateLastModified": org.date_last_modified.strftime(
-                            "%Y-%m-%dT%H:%M:%SZ"
-                        ),
+                        "status": "",  # Empty per sample
+                        "dateLastModified": "",  # Empty per sample
                         "name": org.name,
                         "type": org.type.value,
                         "identifier": org.identifier or "",
-                        "metadata": org.metadata or "",
+                        "parentSourcedId": parent_sourced_id,
                     }
                 )
 
@@ -90,19 +92,14 @@ class OneRosterCSVWriter:
                     "status",
                     "dateLastModified",
                     "enabledUser",
-                    "orgSourcedIds",
-                    "role",
                     "username",
-                    "userIds",
                     "givenName",
                     "familyName",
                     "middleName",
                     "email",
-                    "sms",
-                    "phone",
-                    "agents",
                     "grades",
                     "password",
+                    "userMasterIdentifier",
                 ],
             )
             writer.writeheader()
@@ -111,24 +108,17 @@ class OneRosterCSVWriter:
                 writer.writerow(
                     {
                         "sourcedId": user.sourced_id,
-                        "status": user.status.value,
-                        "dateLastModified": user.date_last_modified.strftime(
-                            "%Y-%m-%dT%H:%M:%SZ"
-                        ),
+                        "status": "",  # Empty per sample
+                        "dateLastModified": "",  # Empty per sample
                         "enabledUser": str(user.enabled_user).upper(),
-                        "orgSourcedIds": user.org_sourced_ids,
-                        "role": user.role.value,
                         "username": user.username,
-                        "userIds": user.user_ids or "",
                         "givenName": user.given_name,
                         "familyName": user.family_name,
                         "middleName": user.middle_name or "",
                         "email": user.email or "",
-                        "sms": user.sms or "",
-                        "phone": user.phone or "",
-                        "agents": user.agents or "",
                         "grades": user.grades or "",
                         "password": user.password or "",
+                        "userMasterIdentifier": user.sourced_id.lower(),  # Lowercase sourcedId
                     }
                 )
 
@@ -157,12 +147,7 @@ class OneRosterCSVWriter:
                     "dateLastModified",
                     "schoolYearSourcedId",
                     "title",
-                    "courseCode",
-                    "grades",
                     "orgSourcedId",
-                    "subjects",
-                    "subjectCodes",
-                    "metadata",
                 ],
             )
             writer.writeheader()
@@ -171,18 +156,11 @@ class OneRosterCSVWriter:
                 writer.writerow(
                     {
                         "sourcedId": course.sourced_id,
-                        "status": course.status.value,
-                        "dateLastModified": course.date_last_modified.strftime(
-                            "%Y-%m-%dT%H:%M:%SZ"
-                        ),
+                        "status": "",  # Empty per sample
+                        "dateLastModified": "",  # Empty per sample
                         "schoolYearSourcedId": course.school_year_sourced_id or "",
                         "title": course.title,
-                        "courseCode": course.course_code or "",
-                        "grades": course.grades or "",
                         "orgSourcedId": course.org_sourced_id,
-                        "subjects": course.subjects or "",
-                        "subjectCodes": course.subject_codes or "",
-                        "metadata": course.metadata or "",
                     }
                 )
 
@@ -210,16 +188,10 @@ class OneRosterCSVWriter:
                     "status",
                     "dateLastModified",
                     "title",
-                    "classCode",
-                    "classType",
-                    "location",
-                    "grades",
-                    "subjects",
                     "courseSourcedId",
+                    "classType",
                     "schoolSourcedId",
                     "termSourcedIds",
-                    "periods",
-                    "metadata",
                 ],
             )
             writer.writeheader()
@@ -228,21 +200,13 @@ class OneRosterCSVWriter:
                 writer.writerow(
                     {
                         "sourcedId": cls.sourced_id,
-                        "status": cls.status.value,
-                        "dateLastModified": cls.date_last_modified.strftime(
-                            "%Y-%m-%dT%H:%M:%SZ"
-                        ),
+                        "status": "",  # Empty per sample
+                        "dateLastModified": "",  # Empty per sample
                         "title": cls.title,
-                        "classCode": cls.class_code or "",
-                        "classType": cls.class_type.value,
-                        "location": cls.location or "",
-                        "grades": cls.grades or "",
-                        "subjects": cls.subjects or "",
                         "courseSourcedId": cls.course_sourced_id,
+                        "classType": cls.class_type.value,
                         "schoolSourcedId": cls.school_sourced_id,
                         "termSourcedIds": cls.term_sourced_ids or "",
-                        "periods": cls.periods or "",
-                        "metadata": cls.metadata or "",
                     }
                 )
 
@@ -274,22 +238,11 @@ class OneRosterCSVWriter:
                     "userSourcedId",
                     "role",
                     "primary",
-                    "beginDate",
-                    "endDate",
-                    "metadata",
                 ],
             )
             writer.writeheader()
 
             for enrollment in data_model.enrollments:
-                # Format dates if present
-                begin_date = ""
-                if enrollment.begin_date:
-                    begin_date = enrollment.begin_date.strftime("%Y-%m-%d")
-                end_date = ""
-                if enrollment.end_date:
-                    end_date = enrollment.end_date.strftime("%Y-%m-%d")
-
                 # Format primary field
                 primary = ""
                 if enrollment.primary is not None:
@@ -298,18 +251,13 @@ class OneRosterCSVWriter:
                 writer.writerow(
                     {
                         "sourcedId": enrollment.sourced_id,
-                        "status": enrollment.status.value,
-                        "dateLastModified": enrollment.date_last_modified.strftime(
-                            "%Y-%m-%dT%H:%M:%SZ"
-                        ),
+                        "status": "",  # Empty per sample
+                        "dateLastModified": "",  # Empty per sample
                         "classSourcedId": enrollment.class_sourced_id,
                         "schoolSourcedId": enrollment.school_sourced_id,
                         "userSourcedId": enrollment.user_sourced_id,
                         "role": enrollment.role.value,
                         "primary": primary,
-                        "beginDate": begin_date,
-                        "endDate": end_date,
-                        "metadata": enrollment.metadata or "",
                     }
                 )
 
@@ -342,7 +290,6 @@ class OneRosterCSVWriter:
                     "endDate",
                     "parentSourcedId",
                     "schoolYear",
-                    "metadata",
                 ],
             )
             writer.writeheader()
@@ -351,19 +298,111 @@ class OneRosterCSVWriter:
                 writer.writerow(
                     {
                         "sourcedId": session.sourced_id,
-                        "status": session.status.value,
-                        "dateLastModified": session.date_last_modified.strftime(
-                            "%Y-%m-%dT%H:%M:%SZ"
-                        ),
+                        "status": "",  # Empty per sample
+                        "dateLastModified": "",  # Empty per sample
                         "title": session.title,
                         "type": session.type,
                         "startDate": session.start_date.strftime("%Y-%m-%d"),
                         "endDate": session.end_date.strftime("%Y-%m-%d"),
                         "parentSourcedId": session.parent_sourced_id or "",
                         "schoolYear": session.school_year,
-                        "metadata": session.metadata or "",
                     }
                 )
+
+        return file_path
+
+    def write_manifest(self, file_name: str = "manifest.csv") -> Path:
+        """Write manifest.csv.
+
+        Args:
+            file_name: Output file name (default: manifest.csv)
+
+        Returns:
+            Path to written file
+        """
+        file_path = self.output_dir / file_name
+
+        # Manifest properties based on OneRoster 1.2 specification
+        manifest_properties = [
+            ("manifest.version", "1.0"),
+            ("oneroster.version", "1.2"),
+            ("file.academicSessions", "bulk"),
+            ("file.categories", "absent"),
+            ("file.classes", "bulk"),
+            ("file.classResources", "absent"),
+            ("file.courses", "bulk"),
+            ("file.courseResources", "absent"),
+            ("file.demographics", "absent"),
+            ("file.enrollments", "bulk"),
+            ("file.lineItemLearningObjectiveIds", "absent"),
+            ("file.lineItems", "absent"),
+            ("file.lineItemScoreScales", "absent"),
+            ("file.orgs", "bulk"),
+            ("file.resources", "absent"),
+            ("file.resultLearningObjectiveIds", "absent"),
+            ("file.results", "absent"),
+            ("file.resultScoreScales", "absent"),
+            ("file.roles", "bulk"),
+            ("file.scoreScales", "absent"),
+            ("file.userProfiles", "absent"),
+            ("file.userResources", "absent"),
+            ("file.users", "bulk"),
+            ("source.systemName", "SDS2Roster"),
+            ("source.systemCode", "v0.2.0"),
+        ]
+
+        with open(file_path, "w", encoding="utf-8", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=["propertyName", "value"])
+            writer.writeheader()
+
+            for prop_name, prop_value in manifest_properties:
+                writer.writerow({"propertyName": prop_name, "value": prop_value})
+
+        return file_path
+
+    def write_roles(self, data_model: OneRosterDataModel, file_name: str = "roles.csv") -> Path:
+        """Write roles to roles.csv.
+
+        Args:
+            data_model: OneRoster data model containing roles
+            file_name: Output file name (default: roles.csv)
+
+        Returns:
+            Path to written file
+        """
+        file_path = self.output_dir / file_name
+
+        with open(file_path, "w", encoding="utf-8", newline="") as f:
+            writer = csv.DictWriter(
+                f,
+                fieldnames=[
+                    "sourcedId",
+                    "status",
+                    "dateLastModified",
+                    "userSourcedId",
+                    "roleType",
+                    "role",
+                    "orgSourcedId",
+                    "userProfileSourcedId",
+                ],
+            )
+            writer.writeheader()
+
+            # Generate roles from data model if available
+            if hasattr(data_model, 'roles'):
+                for role in data_model.roles:
+                    writer.writerow(
+                        {
+                            "sourcedId": role.sourced_id,
+                            "status": "",  # Empty per sample
+                            "dateLastModified": "",  # Empty per sample
+                            "userSourcedId": role.user_sourced_id,
+                            "roleType": role.role_type,
+                            "role": role.role,
+                            "orgSourcedId": role.org_sourced_id,
+                            "userProfileSourcedId": role.user_profile_sourced_id or "",
+                        }
+                    )
 
         return file_path
 
@@ -377,6 +416,9 @@ class OneRosterCSVWriter:
             Dictionary mapping file type to written file path
         """
         written_files = {}
+
+        # Always write manifest first
+        written_files["manifest"] = self.write_manifest()
 
         if data_model.orgs:
             written_files["orgs"] = self.write_orgs(data_model)
@@ -395,5 +437,9 @@ class OneRosterCSVWriter:
 
         if data_model.academic_sessions:
             written_files["academicSessions"] = self.write_academic_sessions(data_model)
+
+        # Write roles if available
+        if hasattr(data_model, 'roles') and data_model.roles:
+            written_files["roles"] = self.write_roles(data_model)
 
         return written_files

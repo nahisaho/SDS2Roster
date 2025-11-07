@@ -87,6 +87,30 @@ sds2roster version
 sds2roster convert /path/to/sds/files /path/to/output --verbose
 ```
 
+## 出力形式
+
+SDS2Rosterは、OneRoster v1.2仕様に準拠した以下のCSVファイルを生成します：
+
+### 生成されるファイル
+
+- **manifest.csv** - OneRoster 1.2メタデータファイル
+- **orgs.csv** - 組織（学校、学区）情報
+- **users.csv** - ユーザー（生徒、教師）情報
+- **courses.csv** - コース情報
+- **classes.csv** - クラス（授業）情報
+- **enrollments.csv** - 生徒・教師の履修情報
+- **academicSessions.csv** - 学期・学年情報
+- **roles.csv** - ユーザーの役割割り当て情報
+
+### CSV形式の特徴
+
+- **空フィールド**: `status`および`dateLastModified`フィールドは空文字列
+- **UTF-8エンコーディング**: 日本語を含む全言語をサポート
+- **UUID v5**: 決定的なGUID生成により、再実行時も同じIDを保証
+- **親子関係**: `parentSourcedId`による組織階層のサポート
+
+詳細な仕様は`RosterCSV_samples/`ディレクトリのサンプルファイルを参照してください。
+
 ## Azure統合
 
 SDS2RosterはAzure Blob StorageとAzure Table Storageをサポートしています。
@@ -202,28 +226,51 @@ SDS2Roster/
 
 ## テスト
 
+### ローカルテスト（推奨）
+
+Azure接続が不要なユニットテストと統合テストのみを実行:
+
+```bash
+# ユニットテストのみ
+pytest tests/unit/ -v
+
+# ローカル統合テスト（Azureなし）
+pytest tests/integration/test_end_to_end.py -v
+
+# すべてのローカルテスト
+pytest tests/unit/ tests/integration/test_end_to_end.py -v
+```
+
+### Azureテスト（オプション）
+
+Azure Blob/Table Storageを使用するテストは`azure`マーカーで識別されます。
+これらのテストにはAzurite（Azureストレージエミュレーター）が必要です:
+
+```bash
+# Azuriteを起動
+docker-compose up -d azurite
+
+# Azureテストのみ実行
+pytest -m azure -v
+
+# Azureテストをスキップ
+pytest -m "not azure" -v
+```
+
 ### すべてのテストを実行
 
 ```bash
+# Azureテストを含む全テスト（Azurite必須）
 pytest
+
+# Azureテストを除く全テスト（ローカルのみ）
+pytest -m "not azure"
 ```
 
 ### カバレッジ付きでテスト
 
 ```bash
-pytest --cov=src/sds2roster --cov-report=html
-```
-
-### 単体テストのみ
-
-```bash
-pytest tests/unit/
-```
-
-### 統合テストのみ
-
-```bash
-pytest tests/integration/
+pytest --cov=src/sds2roster --cov-report=html -m "not azure"
 ```
 
 ## 開発

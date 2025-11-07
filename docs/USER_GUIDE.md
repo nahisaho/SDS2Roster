@@ -67,15 +67,21 @@ sds2roster convert sds_data/ output/
 
 ```bash
 ls output/
-# orgs.csv
-# users.csv
-# courses.csv
-# classes.csv
-# enrollments.csv
-# academicSessions.csv
-# manifest.json
-# userIds.json
+# manifest.csv      - OneRoster 1.2メタデータ
+# orgs.csv          - 組織情報
+# users.csv         - ユーザー情報
+# courses.csv       - コース情報
+# classes.csv       - クラス情報
+# enrollments.csv   - 履修情報
+# academicSessions.csv - 学期情報
+# roles.csv         - 役割割り当て情報
 ```
+
+**出力形式の特徴（v2.0.0以降）:**
+- `status`と`dateLastModified`フィールドは空文字列
+- UTF-8エンコーディングで日本語をサポート
+- UUID v5による決定的なID生成
+- OneRoster v1.2仕様に厳密に準拠
 
 ---
 
@@ -282,14 +288,14 @@ print(f"Total: {stats['total']}, Success: {stats['success']}")
 
 ### Q: どのSDSバージョンに対応していますか?
 
-A: Microsoft School Data Sync v2.x のCSV形式に対応しています。
+A: Microsoft School Data Sync v2.xのCSV形式に対応しています。
 
 ### Q: 大規模なデータセットの変換にはどのくらい時間がかかりますか?
 
 A: パフォーマンステスト結果:
-- 1,000学生: 約0.05秒 (38,000レコード/秒)
-- 10,000学生: 約0.34秒 (61,000レコード/秒)
-- 100,000学生: 約5秒以内 (推定)
+- 1,000学生: 約0.05秒（38,000レコード/秒）
+- 10,000学生: 約0.34秒（61,000レコード/秒）
+- 100,000学生: 約5秒以内（推定）
 
 ### Q: エラーが発生した場合はどうすればいいですか?
 
@@ -301,7 +307,7 @@ A:
 
 ### Q: OneRosterのどのバージョンに準拠していますか?
 
-A: OneRoster v1.2 に準拠しています。
+A: OneRoster v1.2に準拠しています。
 
 ### Q: Azure統合は必須ですか?
 

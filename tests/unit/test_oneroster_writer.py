@@ -46,6 +46,7 @@ def sample_data_model() -> OneRosterDataModel:
         name="Tokyo International School",
         type=OrgType.SCHOOL,
         identifier="TIS-001",
+        parent_sourced_id=None,
         metadata='{"sis_id":"SCH001"}',
     )
 
@@ -95,7 +96,9 @@ class TestOneRosterCSVWriter:
         assert rows[0]["sourcedId"] == "550e8400-e29b-41d4-a716-446655440001"
         assert rows[0]["name"] == "Tokyo International School"
         assert rows[0]["type"] == "school"
-        assert rows[0]["status"] == "active"
+        assert rows[0]["status"] == ""  # Empty per new format
+        assert rows[0]["dateLastModified"] == ""  # Empty per new format
+        assert "parentSourcedId" in rows[0]  # New field
 
     def test_write_users(
         self, writer: OneRosterCSVWriter, sample_data_model: OneRosterDataModel
@@ -114,10 +117,16 @@ class TestOneRosterCSVWriter:
         assert len(rows) == 1
         assert rows[0]["sourcedId"] == "550e8400-e29b-41d4-a716-446655440002"
         assert rows[0]["username"] == "taro.yamada"
-        assert rows[0]["role"] == "student"
         assert rows[0]["enabledUser"] == "TRUE"
         assert rows[0]["givenName"] == "Taro"
         assert rows[0]["familyName"] == "Yamada"
+        assert rows[0]["status"] == ""  # Empty per new format
+        assert rows[0]["dateLastModified"] == ""  # Empty per new format
+        assert rows[0]["userMasterIdentifier"] == "550e8400-e29b-41d4-a716-446655440002".lower()  # New field
+        # These fields should not exist in new format
+        assert "role" not in rows[0]
+        assert "orgSourcedIds" not in rows[0]
+        assert "userIds" not in rows[0]
 
     def test_write_users_with_optional_fields(
         self, writer: OneRosterCSVWriter, output_dir: Path
@@ -176,6 +185,15 @@ class TestOneRosterCSVWriter:
         assert len(rows) == 1
         assert rows[0]["title"] == "Math 101 - Period 1"
         assert rows[0]["classType"] == "scheduled"
+        assert rows[0]["status"] == ""  # Empty per new format
+        assert rows[0]["dateLastModified"] == ""  # Empty per new format
+        # These fields should not exist in new format
+        assert "classCode" not in rows[0]
+        assert "location" not in rows[0]
+        assert "grades" not in rows[0]
+        assert "subjects" not in rows[0]
+        assert "periods" not in rows[0]
+        assert "metadata" not in rows[0]
 
     def test_write_enrollments(self, writer: OneRosterCSVWriter, output_dir: Path) -> None:
         """Test writing enrollments to CSV."""
@@ -202,14 +220,18 @@ class TestOneRosterCSVWriter:
 
         assert len(rows) == 1
         assert rows[0]["role"] == "student"
+        assert rows[0]["status"] == ""  # Empty per new format
+        assert rows[0]["dateLastModified"] == ""  # Empty per new format
+        # These fields should not exist in new format
+        assert "beginDate" not in rows[0]
+        assert "endDate" not in rows[0]
+        assert "metadata" not in rows[0]
 
     def test_write_enrollments_with_dates(
         self, writer: OneRosterCSVWriter, output_dir: Path
     ) -> None:
-        """Test writing enrollments with begin and end dates."""
+        """Test writing enrollments with primary flag."""
         now = datetime(2025, 10, 27, 10, 30, 0)
-        begin_date = datetime(2025, 9, 1)
-        end_date = datetime(2025, 12, 20)
 
         enrollment = OneRosterEnrollment(
             sourced_id="550e8400-e29b-41d4-a716-446655440007",
@@ -220,8 +242,6 @@ class TestOneRosterCSVWriter:
             user_sourced_id="550e8400-e29b-41d4-a716-446655440002",
             role=EnrollmentRole.TEACHER,
             primary=True,
-            begin_date=begin_date,
-            end_date=end_date,
         )
 
         data_model = OneRosterDataModel(enrollments=[enrollment])
@@ -231,9 +251,10 @@ class TestOneRosterCSVWriter:
             reader = csv.DictReader(f)
             rows = list(reader)
 
-        assert rows[0]["beginDate"] == "2025-09-01"
-        assert rows[0]["endDate"] == "2025-12-20"
         assert rows[0]["primary"] == "TRUE"
+        # Date fields should not exist in new format
+        assert "beginDate" not in rows[0]
+        assert "endDate" not in rows[0]
 
     def test_write_academic_sessions(
         self, writer: OneRosterCSVWriter, output_dir: Path
@@ -268,6 +289,10 @@ class TestOneRosterCSVWriter:
         assert rows[0]["title"] == "Fall 2025"
         assert rows[0]["startDate"] == "2025-09-01"
         assert rows[0]["endDate"] == "2025-12-20"
+        assert rows[0]["status"] == ""  # Empty per new format
+        assert rows[0]["dateLastModified"] == ""  # Empty per new format
+        # metadata field should not exist in new format
+        assert "metadata" not in rows[0]
 
     def test_write_all(
         self, writer: OneRosterCSVWriter, sample_data_model: OneRosterDataModel
@@ -275,6 +300,10 @@ class TestOneRosterCSVWriter:
         """Test writing all OneRoster files."""
         written_files = writer.write_all(sample_data_model)
 
+        # manifest.csv should always be written
+        assert "manifest" in written_files
+        assert written_files["manifest"].exists()
+        
         assert "orgs" in written_files
         assert "users" in written_files
         assert written_files["orgs"].exists()
@@ -297,7 +326,42 @@ class TestOneRosterCSVWriter:
         data_model = OneRosterDataModel(orgs=[org])
         written_files = writer.write_all(data_model)
 
+        # manifest.csv should always be written
+        assert "manifest" in written_files
+        
         # Only orgs file should be written
         assert "orgs" in written_files
         assert "users" not in written_files
         assert "classes" not in written_files
+
+    def test_write_manifest(self, writer: OneRosterCSVWriter, output_dir: Path) -> None:
+        """Test writing manifest.csv."""
+        file_path = writer.write_manifest()
+
+        assert file_path.exists()
+        assert file_path.name == "manifest.csv"
+
+        with open(file_path, "r", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            rows = list(reader)
+
+        # Check that manifest has required properties
+        property_names = [row["propertyName"] for row in rows]
+        assert "manifest.version" in property_names
+        assert "oneroster.version" in property_names
+        assert "source.systemName" in property_names
+        assert "source.systemCode" in property_names
+        assert "file.academicSessions" in property_names
+        assert "file.orgs" in property_names
+        assert "file.users" in property_names
+        assert "file.classes" in property_names
+        assert "file.courses" in property_names
+        assert "file.enrollments" in property_names
+        assert "file.roles" in property_names
+
+        # Verify some values
+        manifest_dict = {row["propertyName"]: row["value"] for row in rows}
+        assert manifest_dict["manifest.version"] == "1.0"
+        assert manifest_dict["oneroster.version"] == "1.2"
+        assert manifest_dict["source.systemName"] == "SDS2Roster"
+        assert manifest_dict["source.systemCode"] == "v0.2.0"

@@ -7,6 +7,7 @@ from sds2roster.models.oneroster import (
     OneRosterDataModel,
     OneRosterEnrollment,
     OneRosterOrg,
+    OneRosterRole,
     OneRosterUser,
 )
 from sds2roster.models.sds import (
@@ -34,4 +35,5 @@ __all__ = [
     "OneRosterClass",
     "OneRosterEnrollment",
     "OneRosterAcademicSession",
+    "OneRosterRole",
 ]

@@ -1,8 +1,6 @@
-"""Unit tests for converter module."""
+"""Unit tests for SDS to OneRoster converter."""
 
-from datetime import UTC, datetime
-
-import pytest
+from datetime import datetime, timezone
 
 from sds2roster.converter import SDSToOneRosterConverter
 from sds2roster.models.oneroster import (
@@ -57,6 +55,7 @@ class TestSDSToOneRosterConverter:
         assert org.type == OrgType.SCHOOL
         assert org.identifier == "001"
         assert org.status == OneRosterStatus.ACTIVE
+        assert org.parent_sourced_id is None  # Should be None for schools without parent
 
     def test_convert_users_students(self) -> None:
         """Test converting students to users."""
@@ -215,8 +214,8 @@ class TestSDSToOneRosterConverter:
             section_number="101A",
             term_sis_id="fall2024",
             term_name="Fall 2024",
-            term_start_date=datetime(2024, 9, 1, tzinfo=UTC),
-            term_end_date=datetime(2024, 12, 20, tzinfo=UTC),
+            term_start_date=datetime(2024, 9, 1, tzinfo=timezone.utc),
+            term_end_date=datetime(2024, 12, 20, tzinfo=timezone.utc),
         )
         section2 = SDSSection(
             sis_id="section002",
@@ -225,8 +224,8 @@ class TestSDSToOneRosterConverter:
             section_number="101B",
             term_sis_id="fall2024",  # Same term
             term_name="Fall 2024",
-            term_start_date=datetime(2024, 9, 1, tzinfo=UTC),
-            term_end_date=datetime(2024, 12, 20, tzinfo=UTC),
+            term_start_date=datetime(2024, 9, 1, tzinfo=timezone.utc),
+            term_end_date=datetime(2024, 12, 20, tzinfo=timezone.utc),
         )
         sds_data = SDSDataModel(sections=[section1, section2])
 
@@ -274,8 +273,8 @@ class TestSDSToOneRosterConverter:
             course_number="MATH101",
             term_sis_id="fall2024",
             term_name="Fall 2024",
-            term_start_date=datetime(2024, 9, 1, tzinfo=UTC),
-            term_end_date=datetime(2024, 12, 20, tzinfo=UTC),
+            term_start_date=datetime(2024, 9, 1, tzinfo=timezone.utc),
+            term_end_date=datetime(2024, 12, 20, tzinfo=timezone.utc),
         )
         student_enrollment = SDSEnrollment(
             sis_id="student001",
